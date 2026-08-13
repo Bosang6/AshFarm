@@ -43,6 +43,8 @@ PBGet/*-*
 /.vs
 /.vscode
 /*.code-workspace
+/.vsconfig
+/.slnx
 
 # User-specific files
 *.suo
