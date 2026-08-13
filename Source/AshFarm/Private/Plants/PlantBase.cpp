@@ -162,13 +162,13 @@ UStaticMesh* UPlantBase::GetStageMesh() const
     switch(CurrentGrowthStage)
     {
         case EGrowthStage::Seedling:
-            return PlantConfig.SeedlingMesh.Get();
+            return PlantConfig.SeedlingMesh.LoadSynchronous();
         case EGrowthStage::Growing:
-            return PlantConfig.GrowthMesh.Get();
+            return PlantConfig.GrowthMesh.LoadSynchronous();
         case EGrowthStage::Flowering:
-            return PlantConfig.FloweringMesh.Get();
+            return PlantConfig.FloweringMesh.LoadSynchronous();
         case EGrowthStage::Mature:
-            return PlantConfig.MatureMesh.Get();
+            return PlantConfig.MatureMesh.LoadSynchronous();
 
         default:
             return nullptr;
