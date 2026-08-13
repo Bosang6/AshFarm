@@ -1,0 +1,79 @@
+# Git LFS attribute presets
+[attr]lock filter=lfs diff=lfs merge=binary -text lockable
+[attr]lockonly lockable
+[attr]lfs filter=lfs diff=lfs merge=binary -text
+[attr]lfstext filter=lfs diff=lfstext merge=lfstext -text
+
+# Unreal Engine binary asset files - use LFS and lockable
+*.uasset lock
+*.umap lock
+
+# Unreal Engine legacy / additional asset files
+*.upk lfs
+*.uiasset lfs
+
+# Unreal Engine text/config files
+*.ini text
+*.uproject text
+*.uplugin text
+
+# 3D source files
+*.obj lfs
+*.fbx lfs
+
+# Audio files
+*.wav lfs
+*.mp3 lfs
+*.ogg lfs
+*.flac lfs
+*.bank lfs
+
+# Image files
+*.png lfs
+*.jpg lfs
+*.jpeg lfs
+*.tga lfs
+*.tif lfs
+*.tiff lfs
+*.psd lfs
+*.psb lfs
+*.hdr lfs
+*.exr lfs
+
+# Font files
+*.ttf lfs
+*.otf lfs
+
+# Video files
+*.mp4 lfs
+*.mov lfs
+*.avi lfs
+*.bk2 lfs
+
+# Substance / texture source files
+*.sbs lfs
+*.sbsar lfs
+
+# FMOD / Wwise / middleware files
+*.bank lfs
+*.wem lfs
+
+# Binaries
+*.exe lfs
+*.dll lfs
+*.so lfs
+*.dylib lfs
+
+# Archives
+*.zip lfs
+*.7z lfs
+*.rar lfs
+*.tar lfs
+*.gz lfs
+
+# Optional Unreal/plugin packaged or bulk data files
+*.ubulk lfs
+*.uexp lfs
+*.uptnl lfs
+*.udk lfs
+*.raw lfs
