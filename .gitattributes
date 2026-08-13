@@ -1,12 +1,12 @@
-# Git LFS attribute presets
+lfs# Git LFS attribute presets
 [attr]lock filter=lfs diff=lfs merge=binary -text lockable
 [attr]lockonly lockable
 [attr]lfs filter=lfs diff=lfs merge=binary -text
 [attr]lfstext filter=lfs diff=lfstext merge=lfstext -text
 
 # Unreal Engine binary asset files - use LFS and lockable
-*.uasset lock
-*.umap lock
+*.uasset filter=lfs diff=lfs merge=lfs -text lockable
+*.umap filter=lfs diff=lfs merge=lfs -text lockable
 
 # Unreal Engine legacy / additional asset files
 *.upk lfs
