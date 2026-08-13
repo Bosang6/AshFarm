@@ -76,6 +76,19 @@ bool UPlantBase::LoadFromPlantDataTable()
     return true;
 }
 
+// 获取所有植物名称 （供编辑器下拉菜单使用）
+TArray<FName> UPlantBase::GetPlantNames() const
+{
+    TArray<FName> PlantNames;
+
+    if(UPlantBase::PlantDataTable)
+    {
+        PlantNames = UPlantBase::PlantDataTable->GetRowNames();
+    }
+    
+    return PlantNames;
+}
+
 // 生长
 void UPlantBase::Grow(float DeltaTime, const FPlantGrowthContext& Context
     )

@@ -59,11 +59,15 @@ public:
 	// ====================
 
 	// 行命名
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物", meta = (DisplayName = "行命名"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物", meta = (DisplayName = "行命名", GetOptions = "GetPlantNames"))
 	FName RowName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物", meta = (DisplayName = "植物属性配置"))
 	FPlantConfig PlantConfig;
+
+	// 获取所有植物名称 （供编辑器下拉菜单使用）
+	UFUNCTION(CallInEditor)
+	TArray<FName> GetPlantNames() const;
 
 	// ====================
 	// 运行时状态 RuntimeState
