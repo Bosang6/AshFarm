@@ -47,9 +47,16 @@ public:
 	static TObjectPtr<UDataTable> PlantDataTable;
 	static void LoadPlantDataTable();
 
+	// 通过 RowName行命名 从植物配置表加载植物属性
+	bool LoadFromPlantDataTable();
+
 	// ====================
 	// 植物属性 配置 Config
 	// ====================
+
+	// 行命名
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物", meta = (DisplayName = "行命名"))
+	FName RowName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物", meta = (DisplayName = "植物属性配置"))
 	FPlantConfig PlantConfig;

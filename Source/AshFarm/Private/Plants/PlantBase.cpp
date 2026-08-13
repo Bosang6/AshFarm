@@ -13,7 +13,11 @@ void UPlantBase::PostInitProperties()
 {
     Super::PostInitProperties();
 
+    // 加载植物配置数据表
     LoadPlantDataTable();
+
+    // 从植物配置数据表加载植物属性
+    LoadFromPlantDataTable();
 }
 
 // 加载植物配置数据表
@@ -27,9 +31,32 @@ void UPlantBase::LoadPlantDataTable()
     }
     else
     {
-        UE_LOG(A_LogAshFarm, Error, TEXT("植物配置数据表: 加载成功"));
+        UE_LOG(A_LogAshFarm, Log, TEXT("植物配置数据表: 加载成功"));
     }
 
+}
+
+// 通过 RowName行命名 从植物配置表加载植物属性
+bool UPlantBase::LoadFromPlantDataTable()
+{
+    if(!UPlantBase::PlantDataTable)
+    {
+        UE_LOG(A_LogAshFarm, Error, TEXT("植物配置数据表: 未加载"))
+        return false;
+    }
+
+    FPlantConfig* FoundRow = UPlantBase::PlantDataTable->FindRow<FPlantConfig>(RowName, TEXT(""));
+
+    if(!FoundRow)
+    {
+        UE_LOG(A_LogAshFarm, Error, TEXT("植物配置数据表: 未找到行命名未 %s 的行"), *RowName.ToString());
+        return false;
+    }
+
+    PlantConfig = *FoundRow;
+    UE_LOG(A_LogAshFarm, Log, TEXT("植物配置数据表: 加载成功, 植物名称: %s, 生长速度: %f"), *PlantConfig.PlantName, PlantConfig.GrowthSpeed);
+
+    return true;
 }
 
 // 生长

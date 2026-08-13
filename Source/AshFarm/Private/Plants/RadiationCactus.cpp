@@ -5,12 +5,7 @@
 
 URadiationCactus::URadiationCactus()
 {
-    PlantConfig.PlantName = TEXT("辐射仙人掌");
-
-    // 仙人掌的耗水只有小麦的四分之一 （0.005）
-    PlantConfig.WaterConsumption = 0.005f;
-
-    PlantConfig.Sensitivity = 0.5f;
+    RowName = TEXT("辐射仙人掌");
 }
 
 // 生长重写

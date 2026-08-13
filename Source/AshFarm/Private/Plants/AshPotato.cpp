@@ -6,12 +6,6 @@
 
 UAshPotato::UAshPotato()
 {
-    PlantConfig.PlantName = TEXT("灰烬土豆");
-    PlantConfig.GrowthSpeed = 0.8f;
-    PlantConfig.WaterConsumption = 0.025f;
-    PlantConfig.FertilityConsumption = 0.02f;
-    PlantConfig.MatureProgress = 80.0f;
-    PlantConfig.Sensitivity = 1.5f;
 }
 
 // 生长重写

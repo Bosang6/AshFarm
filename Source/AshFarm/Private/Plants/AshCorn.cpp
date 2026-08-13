@@ -6,11 +6,6 @@
 
 UAshCorn::UAshCorn()
 {
-    PlantConfig.PlantName = TEXT("灰烬玉米");
-    PlantConfig.GrowthSpeed = 2.0f;
-    PlantConfig.WaterConsumption = 0.02f;
-    PlantConfig.FertilityConsumption = 0.02f;
-    PlantConfig.MatureProgress = 80.0f;
 }
 
 void UAshCorn::Grow(float DeltaTime, const FPlantGrowthContext& Context)
