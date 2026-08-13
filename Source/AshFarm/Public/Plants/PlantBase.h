@@ -40,6 +40,10 @@ public:
 	// 当构造完成后调用
 	virtual void PostInitProperties() override;
 
+	// PostEditChangeProperty 
+	// 编辑器专用回调, 在Detail面板中, 任何数据被修改都会被调用。用于更新编辑时状态，便于策划观察。
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+
 	// ====================
 	// 植物配置数据表 
 	// ====================

@@ -20,6 +20,23 @@ void UPlantBase::PostInitProperties()
     LoadFromPlantDataTable();
 }
 
+// 编辑器专用回调, 在Detail面板中, 任何数据被修改都会被调用。用于更新编辑时状态，便于策划观察。
+void UPlantBase::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+    Super::PostEditChangeProperty(PropertyChangedEvent);
+
+    // NAME_None 为 FName 的空值
+    // 当RowName改变时，且不为空，从植物配置表数据表加载数据 
+    if(RowName != NAME_None)
+    {
+        // 加载植物配置数据表
+        LoadPlantDataTable();
+
+        // 从植物配置数据表加载植物属性
+        LoadFromPlantDataTable();
+    }
+}
+
 // 加载植物配置数据表
 void UPlantBase::LoadPlantDataTable()
 {
