@@ -92,7 +92,9 @@ void UPlantBase::Grow(float DeltaTime, const FPlantGrowthContext& Context
         EvaluateMoisture(Context.Moisture) *
         EvaluateTemperature(Context.Temperature) *
         EvaluateRadiation(Context.RadiationLevel) *
-        EvaluateToxicity(Context.Toxicity);
+        EvaluateToxicity(Context.Toxicity) *
+        EvaluateWindSpeed(Context.WindSpeed) *
+        EvaluateLightIntensity(Context.LightIntensity);
 
     // 作物逆境值计算
     if(EvaluatedMulti < 1.0f)
@@ -190,42 +192,6 @@ UStaticMesh* UPlantBase::GetStageMesh() const
         default:
             return nullptr;
     }
-}
-
-// 评估土壤状态得到作物生长乘数
-float UPlantBase::EvaluateSoilQuality(ESoilQuality SoilQuality) const
-{
-    return 1.0f;
-}
-
-// 评估土壤肥力得到作物生长乘数
-float UPlantBase::EvaluateFertility(float SoilFertility) const
-{
-    return 1.0f;
-}
-
-// 评估土壤水分得到作物生长乘数
-float UPlantBase::EvaluateMoisture(float Moisture) const
-{
-    return 1.0f;
-}
-
-// 评估土壤水分得到作物生长乘数
-float UPlantBase::EvaluateTemperature(float Temperature) const
-{
-    return 1.0f;
-}
-
-// 评估土壤水分得到作物生长乘数
-float UPlantBase::EvaluateRadiation(int32 Radiation) const
-{
-    return 1.0f;
-}
-
-// 评估土壤水分得到作物生长乘数
-float UPlantBase::EvaluateToxicity(float Toxicity) const
-{
-    return 1.0f;
 }
 
 void UPlantBase::SetPlantQuality()

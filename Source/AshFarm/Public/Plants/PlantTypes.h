@@ -86,6 +86,85 @@ struct FPlantGrowthContext
 	float LightIntensity;
 };
 
+// 植物环境值范围
+USTRUCT(BlueprintType, meta = (DisplayName = "植物环境值范围"))
+struct FPlantRange
+{
+	GENERATED_BODY()
+
+	FPlantRange() :
+		Min(0.0f),
+		OptimalMin(0.4f),
+		OptimalMax(0.6f),
+		Max(1.0f)
+	{
+
+	}
+
+	FPlantRange(float InMin, float InOptimalMin, float InOptimalMax, float InMax) :
+		Min(InMin),
+		OptimalMin(InOptimalMin),
+		OptimalMax(InOptimalMax),
+		Max(InMax)
+	{
+
+	}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物|生长环境", meta = (DisplayName = "最小值"))
+	float Min = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物|生长环境", meta = (DisplayName = "最优最小值"))
+	float OptimalMin = 0.4f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物|生长环境", meta = (DisplayName = "最优最大值"))
+	float OptimalMax = 0.6f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物|生长环境", meta = (DisplayName = "最大值"))
+	float Max = 1.0f;
+
+	// 结构体内的函数不能使用UFUNCTION
+	float Evaluate(float Value) const
+	{
+		if(Value < Min || Value > Max)
+		{
+			return 0.0f;
+		}
+
+		if(Value >= OptimalMin && Value <= OptimalMax)
+		{
+			return 1.0f;
+		}
+
+		if(Value < OptimalMin)
+		{
+			float Range = OptimalMin - Min;
+			if(Range <= 0) 
+			{
+				return 1.0f;
+			}
+
+			float Alpha = (Value - Min) / Range;
+
+			return FMath::Lerp(0.0f, 1.0f, Alpha);
+		}
+
+		if(Value > OptimalMax)
+		{
+			float Range = Max - OptimalMax;
+			if(Range <= 0) 
+			{
+				return 1.0f;
+			}
+
+			float Alpha = (Value - OptimalMax) / Range;
+
+			return FMath::Lerp(1.0f, 0.0f, Alpha);
+		}
+
+		return 1.0f;
+	}
+}; 
+
 // 植物配置
 USTRUCT(BlueprintType, meta = (DisplayName = "植物配置"))
 struct FPlantConfig : public FTableRowBase
@@ -135,6 +214,34 @@ struct FPlantConfig : public FTableRowBase
 	// 植物敏感度 植物的敏感度会影响逆境值
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物|生长数据", meta = (DisplayName = "植物敏感度"))
 	float Sensitivity = 1.0f;
+
+	// ====================
+	// 环境需求
+	// ====================
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物|环境需求", meta = (DisplayName = "偏好土壤类型"))
+	ESoilType PreferredSoilType = ESoilType::Loam;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物|环境需求", meta = (DisplayName = "肥力范围"))
+	FPlantRange FertilityRange = FPlantRange(0.0f, 10.0f, 90.0f, 100.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物|环境需求", meta = (DisplayName = "湿度范围"))
+	FPlantRange MoistureRange = FPlantRange(0.0f, 0.3f, 1.0f, 1.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物|环境需求", meta = (DisplayName = "温度范围"))
+	FPlantRange TemperatureRange = FPlantRange(0.0f, 20.0f, 30.0f, 40.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物|环境需求", meta = (DisplayName = "辐射范围"))
+	FPlantRange RadiationRange = FPlantRange(0.0f, 0.0f, 0.0f, 0.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物|环境需求", meta = (DisplayName = "毒性范围"))
+	FPlantRange ToxicityRange = FPlantRange(0.0f, 0.0f, 0.0f, 0.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物|环境需求", meta = (DisplayName = "风速范围"))
+	FPlantRange WindSpeedRange = FPlantRange(0.0f, 0.0f, 3.0f, 3.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物|环境需求", meta = (DisplayName = "光照范围"))
+	FPlantRange LightIntensityRange = FPlantRange(0.3f, 0.8f, 1.0f, 1.0f);
 
 	// ====================
 	// 植物外观 配置 Config

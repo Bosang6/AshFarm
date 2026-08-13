@@ -126,24 +126,30 @@ public:
 	void SetGrowthStage();
 
 	// 评估土壤状态得到作物生长乘数
-	virtual float EvaluateSoilQuality(ESoilQuality SoilQuality) const;
+	virtual float EvaluateSoilQuality(ESoilQuality SoilQuality) const { return 1.0f; };
 
-	virtual float EvaluateSoilType(ESoilType SoilType) const { return 1.0f; };
+	virtual float EvaluateSoilType(ESoilType SoilType) const { return PlantConfig.PreferredSoilType == SoilType ? 1.2f : 1.0f; };
 
 	// 评估土壤肥力得到作物生长乘数
-	virtual float EvaluateFertility(float SoilFertility) const;
+	virtual float EvaluateFertility(float SoilFertility) const { return PlantConfig.FertilityRange.Evaluate(SoilFertility); }; 
 
 	// 评估土壤水分得到作物生长乘数
-	virtual float EvaluateMoisture(float Moisture) const;
+	virtual float EvaluateMoisture(float Moisture) const { return PlantConfig.MoistureRange.Evaluate(Moisture); };
 
-	// 评估土壤水分得到作物生长乘数
-	virtual float EvaluateTemperature(float Temperature) const;
+	// 评估温度得到作物生长乘数
+	virtual float EvaluateTemperature(float Temperature) const { return PlantConfig.TemperatureRange.Evaluate(Temperature); };
 
-	// 评估土壤水分得到作物生长乘数
-	virtual float EvaluateRadiation(int32 Radiation) const;
+	// 评估辐射等级得到作物生长乘数
+	virtual float EvaluateRadiation(int32 Radiation) const { return PlantConfig.RadiationRange.Evaluate(Radiation); };
 
-	// 评估土壤水分得到作物生长乘数
-	virtual float EvaluateToxicity(float Toxicity) const;
+	// 评估毒素得到作物生长乘数
+	virtual float EvaluateToxicity(float Toxicity) const { return PlantConfig.ToxicityRange.Evaluate(Toxicity); };
+
+	// 评估风速得到作物生长乘数
+	virtual float EvaluateWindSpeed(float WindSpeed) const { return PlantConfig.WindSpeedRange.Evaluate(WindSpeed); };
+
+	// 评估光照得到作物生长乘数
+	virtual float EvaluateLightIntensity(float LightIntensity) const { return PlantConfig.LightIntensityRange.Evaluate(LightIntensity); };
 
 	// 当成熟时调用
 	UFUNCTION(BlueprintCallable, Category = "植物", meta = (DisplayName = "当成熟时"))
