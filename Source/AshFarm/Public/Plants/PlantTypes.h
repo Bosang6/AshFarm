@@ -7,9 +7,13 @@
 
 namespace PlantDefaults
 {
-	static constexpr float PREMIUM_QUALITY_STRESS_THRESHOLD   	= 5.0f;  // 收成优质阈值
-	static constexpr float NORMAL_QUALITY_STRESS_THRESHOLD  	= 15.0f; // 收成普通阈值
-	static constexpr float WITHERED_QUALITY_STRESS_THRESHOLD  	= 30.0f; // 收成干瘪阈值
+	static constexpr float PREMIUM_QUALITY_STRESS_THRESHOLD   	= 5.0f;   // 收成优质阈值
+	static constexpr float NORMAL_QUALITY_STRESS_THRESHOLD  	= 15.0f;  // 收成普通阈值
+	static constexpr float WITHERED_QUALITY_STRESS_THRESHOLD  	= 30.0f;  // 收成干瘪阈值
+
+	static constexpr float PREMIUM_QUALITY_HARVEST_MULTI 		= 1.2f;   // 优质倍率
+	static constexpr float NORMA_QUALITY_HARVEST_MULTI 			= 1.0f;   // 普通倍率
+	static constexpr float WITHERED_QUALITY_HARVEST_MULTI 		= 0.5f;   // 干瘪倍率
 }
 
 UENUM(BlueprintType)
@@ -19,6 +23,7 @@ enum class EGrowthStage : uint8
 	Growing  	UMETA(DisplayName = "生长期"),
 	Flowering 	UMETA(DisplayName = "开花期"),
 	Mature  	UMETA(DisplayName = "成熟期"),
+	Death		UMETA(DisplayName = "死亡"),
 };
 
 // Quality { 优质, 普通, 干瘪 }
@@ -215,6 +220,10 @@ struct FPlantConfig : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物|生长数据", meta = (DisplayName = "植物敏感度"))
 	float Sensitivity = 1.0f;
 
+	// 最大生长秒数 （植物有最长生长时间限制：如果超过 MaxGrowthTime 还没成熟，植物就死亡）
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物|生长数据", meta = (DisplayName = "最大生长时间"))
+	float MaxGrowthTime = 10.0f;
+
 	// ====================
 	// 环境需求
 	// ====================
@@ -263,4 +272,27 @@ struct FPlantConfig : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物|外观", meta = (DisplayName = "成熟期网格体"))
 	TSoftObjectPtr<UStaticMesh> MatureMesh;
 
+	// ====================
+	// 收获物区域
+	// ====================
+
+	// 收获物名称 用FName，因为要查表
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物|收获物", meta = (DisplayName = "收获物名称"))
+	FName HarvestName = TEXT("");
+
+	// 基础收获量
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物|收获物", meta = (DisplayName = "基础收获量"))
+	float BaseHarvestAmount = 10.0f;
+
+	// 收获副产物名称
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物", meta = (DisplayName = "收获副产物名称"))
+	FName ByproductName = TEXT("");
+
+	// 收获副产物概率
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物|生长数据", meta = (DisplayName = "收获副产物概率", ClampMin = "0.0", ClampMax = "1.0"))
+	float ByproductChance = 0.0f;
+
+	// 收获副产物数量
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "植物|生长数据", meta = (DisplayName = "收获副产物数量"))
+	float ByproductAmount = 1.0f;
 };

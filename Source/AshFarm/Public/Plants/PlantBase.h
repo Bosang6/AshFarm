@@ -77,6 +77,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "植物|生长数据", meta = (DisplayName = "生长进度"))
 	float GrowthProgress = 0.0f;
 
+	// 总生长时间
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "植物|生长数据", meta = (DisplayName = "总生长时间"))
+	float TotalGrowthTime = 0.0f;
+
 	// 植物生长阶段
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "植物|外观", meta = (DisplayName = "植物生长阶段"))
 	EGrowthStage GrowthStage = EGrowthStage::Seedling;
@@ -129,6 +133,42 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "植物", meta = (DisplayName = "设置生长状态"))
 	void SetGrowthStage();
 
+	// 设置收成品质
+	UFUNCTION(BlueprintCallable, Category = "植物", meta = (DisplayName = "设置收成品质"))
+	void SetPlantQuality();
+
+	// 获取作物品质
+	UFUNCTION(BlueprintCallable, Category = "植物", meta = (DisplayName = "获取作物品质"))
+	FString GetQualityText(EPlantQuality InPlantQuality) const;
+
+	// 当成熟时调用
+	UFUNCTION(BlueprintCallable, Category = "植物", meta = (DisplayName = "当成熟时"))
+	virtual void OnMature();
+
+	// 是否成熟
+	UFUNCTION(BlueprintCallable, Category = "植物", meta = (DisplayName = "是否成熟"))
+	virtual bool IsMature() const { return bIsMature; };
+
+	// 当死亡时调用
+	UFUNCTION(BlueprintCallable, Category = "植物", meta = (DisplayName = "当死亡时"))
+	virtual void OnDeath();
+
+	// 是否死亡
+	UFUNCTION(BlueprintCallable, Category = "植物", meta = (DisplayName = "是否死亡"))
+	virtual bool IsDead() const;
+
+	// 收获产量计算
+	UFUNCTION(BlueprintCallable, Category = "植物", meta = (DisplayName = "收获产量计算"))
+	virtual float CalculateHarvest() const;
+
+	// 获取生长时间文本
+	UFUNCTION(BlueprintCallable, Category = "植物", meta = (DisplayName = "获取生长时间文本"))
+	FString GetGrowthTimeText() const;
+
+	// ====================
+	// 环境适应函数
+	// ====================
+	
 	// 评估土壤状态得到作物生长乘数
 	virtual float EvaluateSoilQuality(ESoilQuality SoilQuality) const { return 1.0f; };
 
@@ -155,15 +195,4 @@ public:
 	// 评估光照得到作物生长乘数
 	virtual float EvaluateLightIntensity(float LightIntensity) const { return PlantConfig.LightIntensityRange.Evaluate(LightIntensity); };
 
-	// 当成熟时调用
-	UFUNCTION(BlueprintCallable, Category = "植物", meta = (DisplayName = "当成熟时"))
-	virtual void OnMature();
-
-	// 设置收成品质
-	UFUNCTION(BlueprintCallable, Category = "植物", meta = (DisplayName = "设置收成品质"))
-	void SetPlantQuality();
-
-	// 获取作物品质
-	UFUNCTION(BlueprintCallable, Category = "植物", meta = (DisplayName = "获取作物品质"))
-	FString GetQualityText(EPlantQuality InPlantQuality) const;
 };

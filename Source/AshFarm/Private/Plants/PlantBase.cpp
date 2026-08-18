@@ -85,7 +85,7 @@ TArray<FName> UPlantBase::GetPlantNames() const
     {
         PlantNames = UPlantBase::PlantDataTable->GetRowNames();
     }
-    
+
     return PlantNames;
 }
 
@@ -93,8 +93,24 @@ TArray<FName> UPlantBase::GetPlantNames() const
 void UPlantBase::Grow(float DeltaTime, const FPlantGrowthContext& Context
     )
 {
-    // 没有水或已成熟就不生长
-    if(Context.Moisture <= 0.0f || bIsMature)
+    // 植物死亡则不生长
+    if(IsDead())
+    {
+        return;
+    }
+
+    TotalGrowthTime += DeltaTime;
+
+    if(TotalGrowthTime >= PlantConfig.MaxGrowthTime)
+    { 
+        GrowthStage = EGrowthStage::Death;
+        OnDeath();
+
+        return;
+    }
+
+    // 已成熟就不生长
+    if(bIsMature)
     {
         return;
     }
@@ -119,7 +135,6 @@ void UPlantBase::Grow(float DeltaTime, const FPlantGrowthContext& Context
 
     // 作物成长进度
     GrowthProgress += PlantConfig.GrowthSpeed * EvaluatedMulti * DeltaTime;
-
     //Clamp
     GrowthProgress = FMath::Clamp(GrowthProgress, 0.0f, PlantConfig.MatureProgress);
 
@@ -131,6 +146,41 @@ void UPlantBase::Grow(float DeltaTime, const FPlantGrowthContext& Context
 
     // 生长过后判断作物成长状态
     SetGrowthStage();
+}
+
+// 获取生长时间
+FString UPlantBase::GetGrowthTimeText() const
+{
+    int32 Hours = 0;
+    int32 Minutes = 0;
+    int32 Seconds = 0;
+
+    int32 TotalSeconds = FMath::FloorToInt(TotalGrowthTime);
+
+    if(TotalSeconds / 3600 > 0)
+    {
+        Hours = TotalSeconds / 3600;
+        TotalSeconds %= 3600;
+    }
+    if(TotalSeconds / 60 > 0)
+    {
+        Minutes = TotalSeconds / 60;
+        TotalSeconds %= 60;
+    }
+    Seconds = TotalSeconds;
+
+    if(Hours > 0)
+    {
+        return FString::Printf(TEXT("%d时%d分%d秒"), Hours, Minutes, Seconds);
+    }
+    else if(Minutes > 0)
+    {
+        return FString::Printf(TEXT("%d分%d秒"), Minutes, Seconds);
+    }
+    else
+    {
+        return FString::Printf(TEXT("%d秒"), Seconds);
+    }
 }
 
 // 获取当前生长阶段文字
@@ -155,6 +205,12 @@ FString UPlantBase::GetGrowthStageText(EGrowthStage InGrowthStage) const
 // 设置生长状态, 判断的阈值还是用之前一样的
 void UPlantBase::SetGrowthStage()
 {
+    // Death 是终态，不允许被生长阶段计算覆盖
+    if(IsDead())
+    {
+        return;
+    }
+
     float GrowthProgressRatio = GrowthProgress / PlantConfig.MatureProgress;
 
     if(GrowthProgressRatio < PlantDefaults::GROWTH_PROGRESS_THRESHOLD)
@@ -184,6 +240,18 @@ void UPlantBase::OnMature()
 {
     SetPlantQuality();
     UE_LOG(A_LogAshFarm, Warning, TEXT("收获了 %s (品质: %s)"), *GetPlantName(), *GetQualityText(CurrentQuality));
+}
+
+// 当死亡时调用
+void UPlantBase::OnDeath()
+{
+    UE_LOG(A_LogAshFarm, Warning, TEXT("植物: %s 死亡了"), *GetPlantName());
+}
+
+// 是否死亡
+bool UPlantBase::IsDead() const 
+{
+    return GrowthStage == EGrowthStage::Death; 
 }
 
 UStaticMesh* UPlantBase::GetStageMesh() const
@@ -240,4 +308,34 @@ FString UPlantBase::GetQualityText(EPlantQuality InPlantQuality) const
 		default:
 			return TEXT("");
 	}
+}
+
+// 收获产量计算
+float UPlantBase::CalculateHarvest() const
+{
+    // 植物死亡则不收获
+    if(GrowthStage == EGrowthStage::Death)
+    {
+        return 0.0f;
+    }
+
+    // 计算品质倍率
+    float QualityMulti = 1.0f;
+    switch (CurrentQuality)
+    {
+        case EPlantQuality::Premium:
+            QualityMulti = PlantDefaults::PREMIUM_QUALITY_HARVEST_MULTI;
+            break;
+        case EPlantQuality::Normal:
+            QualityMulti = PlantDefaults::NORMA_QUALITY_HARVEST_MULTI;
+            break;
+        case EPlantQuality::Withered:
+            QualityMulti = PlantDefaults::WITHERED_QUALITY_HARVEST_MULTI;
+            break;
+        
+        default:
+            QualityMulti = PlantDefaults::NORMA_QUALITY_HARVEST_MULTI;
+    }
+
+    return PlantConfig.BaseHarvestAmount * QualityMulti;
 }

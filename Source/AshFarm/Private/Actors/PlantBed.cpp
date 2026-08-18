@@ -118,31 +118,36 @@ void APlantBed::Tick(float DeltaTime)
 		}
 
 		UpdatePlantMesh();
+
+		FVector TextLocation = GetActorLocation() + FVector(0.0f, 0.0f, 100.0f); // 土壤肥力文本位置
+		
+		// DEBUG 打印信息
+		DrawDebugString(
+			GetWorld(), 
+			TextLocation, 
+			FString::Printf(TEXT("种植床ID: %d \n\n	\
+					土壤类型: %s, 土壤肥力: %f, 土壤品质: %s, 土壤湿度: %f \n\n	\
+					目前作物: %s, 生长进度: %s (%f %s) - %s, 逆境值: %2f, 品质: %s \n\n \
+					预计产量: %f"), 
+				BedID,
+				*GetSoilTypeText(SoilType), 
+				SoilFertility, 
+				*GetSoilQualityText(SoilQuality), 
+				Moisture,
+				*CurrentPlant->GetPlantName(),
+				*CurrentPlant->GetGrowthStageText(CurrentPlant->GetGrowthStage()),
+				CurrentPlant->GrowthProgress,
+				*CurrentPlant->GetGrowthTimeText(),
+				CurrentPlant->IsDead() ? TEXT("已死亡") : TEXT("正常"),
+				CurrentPlant->Stress,
+				*CurrentPlant->GetQualityText(CurrentPlant->CurrentQuality),
+				CurrentPlant->CalculateHarvest()
+			), 
+			nullptr, 
+			CurrentPlant->IsDead() ? FColor::Red : FColor::White, 
+			DeltaTime); 
 	}
 
-	FVector TextLocation = GetActorLocation() + FVector(0.0f, 0.0f, 100.0f); // 土壤肥力文本位置
-	
-	// DEBUG 打印信息
-	DrawDebugString(
-		GetWorld(), 
-		TextLocation, 
-		FString::Printf(TEXT("种植床ID: %d \n 土壤类型: %s, 土壤肥力: %f, 土壤品质: %s, 土壤湿度: %f \n 目前作物: %s, 生长进度: %s (%f), 逆境值: %2f, 品质: %s"), 
-			BedID,
-			*GetSoilTypeText(SoilType), 
-			SoilFertility, 
-			*GetSoilQualityText(SoilQuality), 
-			Moisture,
-			*CurrentPlant->GetPlantName(),
-			*CurrentPlant->GetGrowthStageText(CurrentPlant->GetGrowthStage()),
-			CurrentPlant->GrowthProgress,
-			CurrentPlant->Stress,
-			*CurrentPlant->GetQualityText(CurrentPlant->CurrentQuality)
-		), 
-		nullptr, 
-		FColor::White, 
-		DeltaTime);
-	// Print Log
-	//UE_LOG(LogTemp, Warning, TEXT("种植床数量: %d"), APlantBed::TotalCount); 
 }
 
 void APlantBed::EndPlay(const EEndPlayReason::Type EndplayReason)
@@ -222,7 +227,8 @@ void APlantBed::UpdatePlantMesh()
 	}
 	else
 	{
-		UE_LOG(A_LogAshFarm, Warning, TEXT("CurrentPlant没有被实例化!"));
+		UE_LOG(A_LogAshFarm, Warning, TEXT("清除网格体"));
+		PlantMesh->SetStaticMesh(nullptr);
 	}
 
 }
@@ -354,4 +360,82 @@ float APlantBed::GetMoistureLossRateBySoilType() const
 		default:
 			return 1.0f;
 	}
+}
+
+// 清除死亡植物
+void APlantBed::ClearDeadPlant()
+{
+	if(!CurrentPlant)
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("植物床ID: %d 没有植物"), BedID);
+		return;
+	}
+
+	if(!CurrentPlant->IsDead())
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("植物床ID: %d 植物仍然存活"), BedID);
+		return;
+	}
+
+
+	UE_LOG(A_LogAshFarm, Warning, TEXT("植物床ID: %d 清除死亡植物"), BedID);
+	CurrentPlant = nullptr;
+
+	UpdatePlantMesh();
+	
+}
+
+// 收获植物
+void APlantBed::Harvest()
+{
+	if(!CurrentPlant)
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("种植床: %d 没有植物"), BedID);
+		return;
+	}
+
+	if(CurrentPlant->IsDead())
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("种植床: %d 当前植物已死亡"), BedID);
+		return;
+	}
+
+	if(!CurrentPlant->IsMature())
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("种植床: %d 当前植物未成熟"), BedID);
+		return;
+	}
+
+	UE_LOG(A_LogAshFarm, Warning, TEXT("种植床: %d 收获成熟植物"), BedID);
+
+	FString PlantName = CurrentPlant->GetPlantName();
+	FString HarvestName = CurrentPlant->PlantConfig.HarvestName.ToString();
+	FString PlantQualityText = CurrentPlant->GetQualityText(CurrentPlant->CurrentQuality);
+	float HarvestAmount = CurrentPlant->CalculateHarvest();
+
+	// 计算附产品数量
+	FString ByproductName = CurrentPlant->PlantConfig.ByproductName.ToString();
+	float ByproductChance = CurrentPlant->PlantConfig.ByproductChance;
+	float ByproductAmount = CurrentPlant->PlantConfig.ByproductAmount;
+
+	// 产生一个随机数 0-1
+	if(FMath::FRand() <= ByproductChance)
+	{
+		HarvestAmount += ByproductAmount;
+	}
+
+	UE_LOG(A_LogAshFarm, Warning, 
+		TEXT("种植床: %d 收获成熟植物, 植物名称: %s, 收获物名称: %s 品质: %s, 收获量: %f \n\n \
+				副产品名称: %s, 数量: %f"), 
+				BedID,
+				*PlantName, 
+				*HarvestName, 
+				*PlantQualityText, 
+				HarvestAmount,
+				*ByproductName,
+				ByproductAmount
+			);
+
+	CurrentPlant = nullptr;
+	UpdatePlantMesh();
 }

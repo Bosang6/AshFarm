@@ -110,9 +110,13 @@ public:
 	// 从AAcotr继承的函数，类似蓝图中的构造脚本，每次拖动Actor都会执行
 	virtual void OnConstruction(const FTransform& Transform) override;
 
-	// 种植评估报告
-	// UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "种植评估报告"))
-	// FString EvaluatePlanting(ECropType Crop) const;
+	// 清除死亡植物
+	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "清除死亡植物"))
+	void ClearDeadPlant();
+
+	// 收获植物
+	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "收获植物"))
+	void Harvest();
 
 	// ==============
 	// 统计数据
