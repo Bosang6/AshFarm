@@ -213,3 +213,34 @@ void AInventory::AddMultipleResources(const TArray<FResourceBundle>& Bundles)
 		AddResource(Bundle.Type, Bundle.Count);
 	}
 }
+
+// 解锁种子类型
+void AInventory::UnlockPlantType(TSubclassOf<UPlantBase> PlantType)
+{
+	if(!PlantType)
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("UnlockPlantType: 种子类型为空"));
+		return;
+	}
+
+	if(UnlockedPlantTypes.Contains(PlantType))
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("UnlockPlantType: 种子类型已解锁"));
+		return;
+	}
+
+	UnlockedPlantTypes.Add(PlantType);
+	UE_LOG(A_LogAshFarm, Warning, TEXT("UnlockPlantType: 解锁种子类型: %s"), *PlantType->GetName());
+}
+
+// 检查种子类型是否已经解锁
+bool AInventory::IsPlantTypeUnlocked(TSubclassOf<UPlantBase> PlantType) const
+{
+	return UnlockedPlantTypes.Contains(PlantType);
+}
+
+// 获取已解锁的种子类型
+TSet<TSubclassOf<UPlantBase>> AInventory::GetUnlockPlantTypes()
+{
+	return UnlockedPlantTypes;
+}

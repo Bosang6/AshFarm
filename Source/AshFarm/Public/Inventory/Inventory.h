@@ -71,6 +71,22 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "批量添加资源"))
 	void AddMultipleResources(const TArray<FResourceBundle>& Bundles);
 
+	// =================
+	// 解锁种子相关
+	// =================
+
+	// 解锁种子类型
+	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "解锁种子类型"))
+	void UnlockPlantType(TSubclassOf<UPlantBase> PlantType);
+
+	// 获取已解锁的种子类型
+	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "获取已解锁的种子类型"))
+	TSet<TSubclassOf<UPlantBase>> GetUnlockPlantTypes();
+
+	// 检查种子类型是否已经解锁
+	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "检查种子类型是否已经解锁"))
+	bool IsPlantTypeUnlocked(TSubclassOf<UPlantBase> PlantType) const;
+
 protected:
 	virtual void BeginPlay() override;
 
