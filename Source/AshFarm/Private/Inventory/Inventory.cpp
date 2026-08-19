@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "AshFarm.h"
 #include "Inventory/Inventory.h"
+#include "AshFarm.h"
 #include "Components/BoxComponent.h"
 
 // Sets default values
@@ -138,7 +138,7 @@ int32 AInventory::RemoveResource(EResourcesType Type, int32 Count)
 	}
 	else
 	{
-		ResourcesInventory.Remoce(Type);
+		ResourcesInventory.Remove(Type);
 	}
 
 	UE_LOG(A_LogAshFarm, Warning, TEXT("仓库资源 %s 剩余数量: %d"), *GetResourceTypeText(Type), NewCount);
