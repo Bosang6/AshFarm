@@ -53,7 +53,7 @@ public:
 
 	// 查询资源数量
 	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "查询资源数量"))
-	int32 GetResourceCount(EResourcesType Type);
+	int32 GetResourceCount(EResourcesType Type) const;
 
 	// 检查资源是否足够
 	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "检查资源是否足够"))

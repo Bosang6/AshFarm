@@ -147,15 +147,14 @@ int32 AInventory::RemoveResource(EResourcesType Type, int32 Count)
 }
 
 // 查询资源数量
-int32 AInventory::GetResourceCount(EResourcesType Type)
+int32 AInventory::GetResourceCount(EResourcesType Type) const
 {
-	// TODO
-	return 0;
+	const int32* CurrentCount = ResourcesInventory.Find(Type);
+	return CurrentCount ? *CurrentCount : 0;
 }
 
 // 检查资源是否足够
 bool AInventory::HasEnoughResources(EResourcesType Type, int32 Count) const
 {	
-	// TODO
-	return false;
-}
+	return GetResourceCount(Type) >= Count; 
+} 
