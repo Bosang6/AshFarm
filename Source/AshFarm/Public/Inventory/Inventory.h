@@ -87,6 +87,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "检查种子类型是否已经解锁"))
 	bool IsPlantTypeUnlocked(TSubclassOf<UPlantBase> PlantType) const;
 
+	// =================
+	// 数据统计 排序
+	// =================
+
+	// 排序类型
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "仓库", meta = (DisplayName = "排序类型"))
+	EInventorySortType SortType = EInventorySortType::TypeAscending;
+
+	// 排序
+	//UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "排序"))
+	// TPair无法公开到蓝图
+	TArray<TPair<EResourcesType, int32>> GetSortedInventory() const;
+
 protected:
 	virtual void BeginPlay() override;
 

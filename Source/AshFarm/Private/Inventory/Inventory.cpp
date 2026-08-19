@@ -178,9 +178,11 @@ void AInventory::PrintResourceInventory() const
 	}
 	else
 	{
+		auto SortedInventory = GetSortedInventory();
+
 		// const TPair<EResourcesType, int32>& Pair : ResourcesInventory
 		// const auto& Pair : ResourcesInventory
-		for(const TPair<EResourcesType, int32>& Pair : ResourcesInventory)
+		for(const TPair<EResourcesType, int32>& Pair : SortedInventory)
 		{
 			PrintString += FString::Printf(TEXT("\n%s: %d"), *GetResourceTypeText(Pair.Key), Pair.Value);
 		}
@@ -243,4 +245,52 @@ bool AInventory::IsPlantTypeUnlocked(TSubclassOf<UPlantBase> PlantType) const
 TSet<TSubclassOf<UPlantBase>> AInventory::GetUnlockPlantTypes()
 {
 	return UnlockedPlantTypes;
+}
+
+// 排序
+TArray<TPair<EResourcesType, int32>> AInventory::GetSortedInventory() const
+{
+	TArray<TPair<EResourcesType, int32>> SortedInventory;
+	for(const auto& Pair : ResourcesInventory)
+	{
+		SortedInventory.Add(Pair);
+	}
+
+	switch (SortType)
+	{
+		case EInventorySortType::CountAscending:
+			SortedInventory.Sort(
+				[](const TPair<EResourcesType, int32>& A, const TPair<EResourcesType, int32>& B)
+				{
+					return A.Value < B.Value;
+				}
+			);
+			break;
+		case EInventorySortType::CountDescending:
+			SortedInventory.Sort(
+				[](const TPair<EResourcesType, int32>& A, const TPair<EResourcesType, int32>& B)
+				{
+					return A.Value > B.Value;
+				}
+			);
+			break;
+		case EInventorySortType::TypeAscending:
+			SortedInventory.Sort(
+				[](const TPair<EResourcesType, int32>& A, const TPair<EResourcesType, int32>& B)
+				{
+					return static_cast<uint8>(A.Key) < static_cast<uint8>(B.Key);
+				}
+			);
+			break;
+		case EInventorySortType::TypeDescending:
+			SortedInventory.Sort(
+				[](const TPair<EResourcesType, int32>& A, const TPair<EResourcesType, int32>& B)
+				{
+					return static_cast<uint8>(A.Key) > static_cast<uint8>(B.Key);
+				}
+			);
+			break;
+	}
+
+	return SortedInventory;
 }

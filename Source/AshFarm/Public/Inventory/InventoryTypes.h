@@ -16,6 +16,17 @@ enum class EResourcesType : uint8
     Plant   UMETA(DisplayName = "种子"),
 };
 
+// 排序类型
+UENUM(BlueprintType)
+enum class EInventorySortType : uint8
+{
+    TypeAscending      UMETA(DisplayName = "类型升序"),
+    TypeDescending     UMETA(DisplayName = "类型降序"),
+    CountAscending     UMETA(DisplayName = "数量升序"),
+    CountDescending    UMETA(DisplayName = "数量升序"),
+};
+
+// 资源配置
 USTRUCT(BlueprintType)
 struct FResourcesConfig
 {
