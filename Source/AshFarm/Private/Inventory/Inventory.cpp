@@ -91,6 +91,12 @@ int32 AInventory::AddResource(EResourcesType Type, int32 Count)
 		}
 	);
 
+	if(!Config)
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("AddResource: 添加资源类型 %s 不存在"), *GetResourceTypeText(Type));
+		return 0;
+	}
+
 	// Map查表, 返回value的指针
 	const int32* CurrentCount = ResourcesInventory.Find(Type);
 	int32 Current = CurrentCount ? *CurrentCount : 0;
@@ -192,4 +198,18 @@ void AInventory::PrintResourceInventory() const
 		0.5f	//文本显示时间
 	); 
 
+}
+
+void AInventory::AddMultipleResources(const TArray<FResourceBundle>& Bundles)
+{
+	for(const FResourceBundle& Bundle : Bundles)
+	{
+		if(Bundle.Count <= 0)
+		{
+			UE_LOG(A_LogAshFarm, Warning, TEXT("AddMultipleResources: 添加资源数量必须大于0"));
+			continue;
+		}
+
+		AddResource(Bundle.Type, Bundle.Count);
+	}
 }

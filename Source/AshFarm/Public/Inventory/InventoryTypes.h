@@ -36,3 +36,18 @@ struct FResourcesConfig
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "资源配置", meta = (DisplayName = "图标"))
     TSoftObjectPtr<UTexture2D> Icon;
 };
+
+
+USTRUCT(BlueprintType)
+struct FResourceBundle
+{
+    GENERATED_BODY()
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "资源包", meta = (DisplayName = "资源类型"))
+    EResourcesType Type;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "资源包", meta = (DisplayName = "资源数量", ClampMin = "0"))
+    int32 Count;
+};
+
+

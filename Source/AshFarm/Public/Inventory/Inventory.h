@@ -67,6 +67,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "打印资源库存"))
 	void PrintResourceInventory() const;
 
+	// 批量添加资源
+	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "批量添加资源"))
+	void AddMultipleResources(const TArray<FResourceBundle>& Bundles);
+
 protected:
 	virtual void BeginPlay() override;
 
