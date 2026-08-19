@@ -22,6 +22,10 @@ class ASHFARM_API AInventory : public AActor
 public:	
 	AInventory();
 
+	// =================
+	// 仓库数据
+	// =================
+
 	// 资源配置数组
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "仓库", meta = (DisplayName = "资源配置表"))
 	TArray<FResourcesConfig> ResourcesConfigs;
@@ -33,6 +37,28 @@ public:
 	// 已解锁的种子类型, TSubclassOf 是一个类，不是一个实例对象
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "仓库", meta = (DisplayName = "已解锁种子类型"))
 	TSet<TSubclassOf<UPlantBase>> UnlockedPlantTypes;
+
+
+	// =================
+	// 仓库功能
+	// =================
+
+	// 添加资源
+	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "添加资源"))
+	int32 AddResource(EResourcesType Type, int32 Count);
+
+	// 移除资源
+	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "移除资源"))
+	int32 RemoveResource(EResourcesType Type, int32 Count);
+
+	// 查询资源数量
+	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "查询资源数量"))
+	int32 GetResourceCount(EResourcesType Type);
+
+	// 检查资源是否足够
+	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "检查资源是否足够"))
+	bool HasEnoughResources(EResourcesType Type, int32 Count) const;
+
 
 
 protected:
