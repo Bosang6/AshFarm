@@ -294,3 +294,73 @@ TArray<TPair<EResourcesType, int32>> AInventory::GetSortedInventory() const
 
 	return SortedInventory;
 }
+
+// 获取资源最大容量
+int32 AInventory::GetResourceCapacity(EResourcesType Type) const
+{
+	const FResourcesConfig* Config = ResourcesConfigs.FindByPredicate(
+		[Type](const FResourcesConfig& Config)
+		{
+			return Config.Type == Type;
+		}
+	);
+
+	if(!Config)
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("AddResource: 添加资源类型 %s 不存在"), *GetResourceTypeText(Type));
+		return 0;
+	}
+
+	return Config->MaxCapacity;
+}
+
+// 获取资源占比
+float AInventory::GetResourcePercentage(EResourcesType Type) const
+{
+	int Total = 0;
+
+	for(const auto& [Key, Count] : ResourcesInventory)
+	{
+		Total += Count;
+	}
+
+	if(Total <= 0)
+	{
+		return 0.0f;
+	}
+
+	return static_cast<float>(GetResourceCount(Type)) / static_cast<float>(Total);
+}
+
+// 获取低库存资源, 例如：占比上限小于20%的资源
+TArray<EResourcesType> AInventory::GetLowStockResources(float ThresholdPercent) const
+{
+	TArray<EResourcesType> LowStockResources;
+
+	if(ThresholdPercent <= 0.0f || ThresholdPercent > 1.0f)
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("GetLowStockResources: 占比阈值必须在0到1之间"));
+		return LowStockResources;
+	}
+
+	for(const auto& Config : ResourcesConfigs)
+	{
+		int32 CurrentCount = GetResourceCount(Config.Type);
+		int32 MaxCapacity = Config.MaxCapacity;
+
+		if(MaxCapacity <= 0)
+		{
+			continue;
+		}
+
+		float CurrentRatio = static_cast<float>(CurrentCount) / static_cast<float>(MaxCapacity);
+
+		if(CurrentRatio < ThresholdPercent)
+		{
+			LowStockResources.Add(Config.Type);
+			UE_LOG(A_LogAshFarm, Warning, TEXT("资源类型 %d 占比为 %.2f, 低于阈值 %.2f"), Config.Type, CurrentRatio, ThresholdPercent);
+		}
+	}
+
+	return LowStockResources;
+}

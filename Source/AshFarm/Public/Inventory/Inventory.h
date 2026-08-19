@@ -71,6 +71,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "批量添加资源"))
 	void AddMultipleResources(const TArray<FResourceBundle>& Bundles);
 
+	// 获取资源最大容量
+	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "获取资源最大容量"))
+	int32 GetResourceCapacity(EResourcesType Type) const;
+
+	// 获取资源占比，例如：水占仓库总库存的百分之多少
+	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "获取资源占比"))
+	float GetResourcePercentage(EResourcesType Type) const;
+
+	// 获取低库存资源, 例如：占比上限小于20%的资源
+	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "获取低库存资源"))
+	TArray<EResourcesType> GetLowStockResources(float ThresholdPercent = 0.2f) const;
+
+
 	// =================
 	// 解锁种子相关
 	// =================
