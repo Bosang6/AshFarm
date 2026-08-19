@@ -59,7 +59,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "检查资源是否足够"))
 	bool HasEnoughResources(EResourcesType Type, int32 Count) const;
 
-
+	// 获取资源类型文本
+	FString GetResourceTypeText(EResourcesType Type) const;
 
 protected:
 	virtual void BeginPlay() override;

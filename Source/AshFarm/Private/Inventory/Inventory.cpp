@@ -42,6 +42,31 @@ void AInventory::Tick(float DeltaTime)
 
 }
 
+// 获取资源类型文本
+FString AInventory::GetResourceTypeText(EResourcesType Type) const
+{
+	switch (Type)
+	{
+		case EResourcesType::Water :
+			return TEXT("水");
+		case EResourcesType::Wood :
+			return TEXT("木材");
+		case EResourcesType::Soil :
+			return TEXT("泥土");
+		case EResourcesType::Waste :
+			return TEXT("废料");
+		case EResourcesType::Gold :
+			return TEXT("金币");
+		case EResourcesType::Tool :
+			return TEXT("工具");
+		case EResourcesType::Plant :
+			return TEXT("种子");
+		
+		default:
+			return TEXT("未知");
+	}
+}
+
 int32 AInventory::AddResource(EResourcesType Type, int32 Count)
 {
 	if(Count <= 0)
@@ -80,15 +105,45 @@ int32 AInventory::AddResource(EResourcesType Type, int32 Count)
 	// 存在：覆盖 | 不存在：添加
 	ResourcesInventory.Add(Type, Current + CanAdd);
 
-	UE_LOG(A_LogAshFarm, Warning, TEXT("AddResource: 资源添加成功"));
+	UE_LOG(A_LogAshFarm, Warning, TEXT("仓库资源 %s 剩余数量: %d"), *GetResourceTypeText(Type), Current + CanAdd);
+
 	return CanAdd;
 }
 
 // 移除资源
 int32 AInventory::RemoveResource(EResourcesType Type, int32 Count)
 {
-	// TODO
-	return 0;
+	if(Count <= 0)
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("RemoveResource: 移除资源数量必须大于0"));
+		return 0;
+	}
+
+	// 查库存
+	const int32* CurrentCount = ResourcesInventory.Find(Type);
+	if(!CurrentCount || *CurrentCount < 0)
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("RemoveResource: 资源库存为0"));
+		return 0;
+	}
+	
+	int32 Current = *CurrentCount;
+	int32 CanRemove = FMath::Min(Current, Count);
+
+	// 移除资源
+	int32 NewCount = Current - CanRemove;
+	if(NewCount > 0)
+	{
+		ResourcesInventory.Add(Type, NewCount);
+	}
+	else
+	{
+		ResourcesInventory.Remoce(Type);
+	}
+
+	UE_LOG(A_LogAshFarm, Warning, TEXT("仓库资源 %s 剩余数量: %d"), *GetResourceTypeText(Type), NewCount);
+
+	return CanRemove;
 }
 
 // 查询资源数量
