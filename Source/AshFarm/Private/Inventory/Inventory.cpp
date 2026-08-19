@@ -2,6 +2,7 @@
 
 #include "Inventory/Inventory.h"
 #include "AshFarm.h"
+#include "DrawDebugHelpers.h"
 #include "Components/BoxComponent.h"
 
 // Sets default values
@@ -40,6 +41,7 @@ void AInventory::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	PrintResourceInventory();
 }
 
 // 获取资源类型文本
@@ -158,3 +160,36 @@ bool AInventory::HasEnoughResources(EResourcesType Type, int32 Count) const
 {	
 	return GetResourceCount(Type) >= Count; 
 } 
+
+// 打印资源库存
+void AInventory::PrintResourceInventory() const
+{
+	FString PrintString = TEXT("==== 仓库资源库存 ====");
+
+	if(ResourcesInventory.IsEmpty())
+	{
+		PrintString += TEXT("\n\n仓库资源库存为空");
+	}
+	else
+	{
+		// const TPair<EResourcesType, int32>& Pair : ResourcesInventory
+		// const auto& Pair : ResourcesInventory
+		for(const TPair<EResourcesType, int32>& Pair : ResourcesInventory)
+		{
+			PrintString += FString::Printf(TEXT("\n%s: %d"), *GetResourceTypeText(Pair.Key), Pair.Value);
+		}
+	}
+
+	FVector TextLocation = GetActorLocation() + FVector(0.0f, 0.0f, 200.0f); // 土壤肥力文本位置
+		
+	// DEBUG 打印信息
+	DrawDebugString(
+		GetWorld(), 
+		TextLocation, 
+		PrintString, 
+		nullptr, 
+		FColor::White, 
+		0.5f	//文本显示时间
+	); 
+
+}

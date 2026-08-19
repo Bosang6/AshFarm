@@ -60,7 +60,12 @@ public:
 	bool HasEnoughResources(EResourcesType Type, int32 Count) const;
 
 	// 获取资源类型文本
+	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "获取资源类型文本"))
 	FString GetResourceTypeText(EResourcesType Type) const;
+
+	// 打印资源库存
+	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "打印资源库存"))
+	void PrintResourceInventory() const;
 
 protected:
 	virtual void BeginPlay() override;
