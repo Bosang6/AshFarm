@@ -55,6 +55,7 @@ void AAshFarmPlayerController::SetupInputComponent()
 			*/
 			EnhancedInputComponent->BindAction(MoveCameraAction, ETriggerEvent::Triggered, this, &AAshFarmPlayerController::MoveCamera);
 			EnhancedInputComponent->BindAction(ZoomAction, ETriggerEvent::Triggered, this, &AAshFarmPlayerController::ZoomCamera);
+			EnhancedInputComponent->BindAction(SelectClickAction, ETriggerEvent::Triggered, this, &AAshFarmPlayerController::SelectClick);
 		}
 		else
 		{
@@ -102,4 +103,10 @@ void AAshFarmPlayerController::ZoomCamera(const FInputActionValue& Value)
 	{
 		AshFarmCharacter->ZoomCamera(ZoomDelta);
 	}
+}
+
+// 选择点击
+void AAshFarmPlayerController::SelectClick(const FInputActionValue& Value)
+{
+
 }
