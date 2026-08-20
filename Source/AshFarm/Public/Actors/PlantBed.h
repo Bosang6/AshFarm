@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Actors/PlantBedTypes.h"
+#include "Interfaces/Interactable.h"
 
 #include "PlantBed.generated.h"
 
@@ -19,7 +20,7 @@ class UPlantBase;
 #define GROWTH_SPEED_FERTILE  1.5f
 
 UCLASS(ClassGroup = "AshFarm|种植系统")
-class ASHFARM_API APlantBed : public AActor
+class ASHFARM_API APlantBed : public AActor, public IInteractable
 {
 	GENERATED_BODY()
 	
@@ -141,6 +142,11 @@ public:
 	// 获取所有种植床实例的数量
 	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "获取所有种植床实例的数量"))
 	static int32 GetTotalCount();
+
+	// ========== 接口实现 ==============
+	virtual void OnSelected_Implementation() override;
+	virtual void OnInteract_Implementation() override;
+	// =================================
 
 protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Root")

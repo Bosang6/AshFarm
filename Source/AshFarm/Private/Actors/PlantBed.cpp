@@ -505,3 +505,20 @@ void APlantBed::InitNeighborBeds()
 		}
 	}
 }
+
+// ============== 
+// 接口实现 
+// ==============
+
+// 选中时
+void APlantBed::OnSelected_Implementation()
+{
+	PrintState();
+}
+
+// 交互时
+void APlantBed::OnInteract_Implementation()
+{
+
+}
+
