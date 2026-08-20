@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "HandPump.generated.h"
 
+class AInventory;
+
 namespace HandPumpDefaults
 {
 	// constexpr 编译时计算，不能再运行时修改
@@ -34,6 +36,10 @@ class ASHFARM_API AHandPump : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AHandPump();
+
+	// 所属仓库
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "仓库", meta = (DisplayName = "所属仓库"))
+	TObjectPtr<AInventory> Inventory = nullptr;
 
 	// ======================
 	// 水位参数

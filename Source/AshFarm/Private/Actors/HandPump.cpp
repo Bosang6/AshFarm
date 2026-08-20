@@ -3,6 +3,7 @@
 
 #include "Actors/HandPump.h"
 #include "AshFarm.h"
+#include "Inventory/Inventory.h"
 
 // Sets default values
 AHandPump::AHandPump()
@@ -105,8 +106,25 @@ float AHandPump::PumpWater()
 
 		if(!bIsBroken && CurrentWater < MaxWater && !bIsPumping)
 		{
-			float LastWater = CurrentWater; 
-			CurrentWater = FMath::Clamp(CurrentWater + AddWaterPerTime, 0.0f, MaxWater);
+			// float LastWater = CurrentWater; 
+			// CurrentWater = FMath::Clamp(CurrentWater + AddWaterPerTime, 0.0f, MaxWater);
+
+			
+			// 检查手压井是否有仓库
+			/*
+				IsValid:
+					1. 判断指针是否为空
+					2. 判断对象是否被GC标记
+					3. 判断对象是否被损坏
+			*/
+			if(!IsValid(Inventory))
+			{
+				UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 所属仓库为空"), *DeviceID.ToString());
+				return 0.0f;
+			}
+
+			// 往 Inventory 仓库水箱内装水
+			int32 AddWater = Inventory->AddResource(EResourcesType::Water, AddWaterPerTime);
 
 			// 耐久度损耗
 			Durability = FMath::Clamp(Durability - DurabilityLossPerPump, 0.0f, MaxDurability);
@@ -126,9 +144,9 @@ float AHandPump::PumpWater()
 			PumpCount++;
 
 			// TCHAR*
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("手压井ID: %s, 当前水位: %f, 泵水次数: %d"), *DeviceID.ToString(), CurrentWater, PumpCount));
+			//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("手压井ID: %s, 当前水位: %f, 泵水次数: %d"), *DeviceID.ToString(), CurrentWater, PumpCount));
 
-			return CurrentWater - LastWater;
+			return AddWater;
 		}
 	}
 	else
