@@ -11,6 +11,8 @@ class UNiagaraSystem;
 class UInputMappingContext;
 class UInputAction;
 class UPathFollowingComponent;
+struct FInputActionValue; // #include "InputActionValue.h"
+
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -40,23 +42,20 @@ protected:
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputMappingContext> DefaultMappingContext;
-	
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, Category="Input")
-	TObjectPtr<UInputAction> SetDestinationClickAction;
 
-	/** Jump Input Action */
+	// 输入操作: 相机移动
 	UPROPERTY(EditAnywhere, Category="Input")
-	TObjectPtr<UInputAction> SetDestinationTouchAction;
+	TObjectPtr<UInputAction> MoveCameraAction;
+
+	// 输入操作: 缩放相机
+	UPROPERTY(EditAnywhere, Category="Input")
+	TObjectPtr<UInputAction> ZoomAction;
 
 	/** True if the controlled character should navigate to the mouse cursor. */
 	uint32 bMoveToMouseCursor : 1;
 
 	/** Set to true if we're using touch input */
 	uint32 bIsTouch : 1;
-
-	/** Saved location of the character movement destination */
-	FVector CachedDestination;
 
 	/** Time that the click input has been pressed */
 	float FollowTime = 0.0f;
@@ -70,16 +69,10 @@ protected:
 
 	/** Initialize input bindings */
 	virtual void SetupInputComponent() override;
-	
-	/** Input handlers */
-	void OnInputStarted();
-	void OnSetDestinationTriggered();
-	void OnSetDestinationReleased();
-	void OnTouchTriggered();
-	void OnTouchReleased();
 
-	/** Helper function to get the move destination */
-	void UpdateCachedDestination();
+	void MoveCamera(const FInputActionValue& Value); // 移动相机
+	void ZoomCamera(const FInputActionValue& Value); // 缩放相机
+	
 };
 
 

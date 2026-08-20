@@ -44,5 +44,7 @@ public:
 	/** Returns the Camera Boom component **/
 	USpringArmComponent* GetCameraBoom() const { return CameraBoom.Get(); }
 
+	UFUNCTION(BlueprintCallable, Category = "Camera", meta = (DisplayName = "相机缩放"))
+	void ZoomCamera(float Value); // 控制相机缩放
 };
 

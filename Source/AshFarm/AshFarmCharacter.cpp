@@ -60,3 +60,12 @@ void AAshFarmCharacter::Tick(float DeltaSeconds)
 
 	// stub
 }
+
+// 控制相机缩放
+void AAshFarmCharacter::ZoomCamera(float Value)
+{
+	CameraBoom->TargetArmLength += Value * 100.0f * -1.0f;
+
+	// 限制缩放大小
+	CameraBoom->TargetArmLength = FMath::Clamp(CameraBoom->TargetArmLength, 1000.0f, 3000.0f);
+}

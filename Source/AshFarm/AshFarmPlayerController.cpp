@@ -25,7 +25,6 @@ AAshFarmPlayerController::AAshFarmPlayerController()
 	// configure the controller
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Default;
-	CachedDestination = FVector::ZeroVector;
 	FollowTime = 0.f;
 }
 
@@ -47,16 +46,15 @@ void AAshFarmPlayerController::SetupInputComponent()
 		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
 		{
 			// Setup mouse input events
-			EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Started, this, &AAshFarmPlayerController::OnInputStarted);
-			EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Triggered, this, &AAshFarmPlayerController::OnSetDestinationTriggered);
-			EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Completed, this, &AAshFarmPlayerController::OnSetDestinationReleased);
-			EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Canceled, this, &AAshFarmPlayerController::OnSetDestinationReleased);
-
-			// Setup touch input events
-			EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Started, this, &AAshFarmPlayerController::OnInputStarted);
-			EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Triggered, this, &AAshFarmPlayerController::OnTouchTriggered);
-			EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Completed, this, &AAshFarmPlayerController::OnTouchReleased);
-			EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Canceled, this, &AAshFarmPlayerController::OnTouchReleased);
+			/*
+				BindAction参数介绍:
+				1. InputAction, 在Input中定义的Action
+				2. 输入方式：Triggered、Started、Ongoing、Canceled、Completed
+				3.
+				4. 输入对应的回调函数
+			*/
+			EnhancedInputComponent->BindAction(MoveCameraAction, ETriggerEvent::Triggered, this, &AAshFarmPlayerController::MoveCamera);
+			EnhancedInputComponent->BindAction(ZoomAction, ETriggerEvent::Triggered, this, &AAshFarmPlayerController::ZoomCamera);
 		}
 		else
 		{
@@ -65,74 +63,43 @@ void AAshFarmPlayerController::SetupInputComponent()
 	}
 }
 
-void AAshFarmPlayerController::OnInputStarted()
+// 移动相机
+void AAshFarmPlayerController::MoveCamera(const FInputActionValue& Value)
 {
-	StopMovement();
+	FVector2D InputVector = Value.Get<FVector2D>();
 
-	// Update the move destination to wherever the cursor is pointing at
-	UpdateCachedDestination();
-}
+	// get the forward input component vector
+	FRotator ForwardRot = GetControlRotation();
+	ForwardRot.Pitch = 0.0f;
 
-void AAshFarmPlayerController::OnSetDestinationTriggered()
-{
-	// We flag that the input is being pressed
-	FollowTime += GetWorld()->GetDeltaSeconds();
+	// get the right input component vector
+	FRotator RightRot = GetControlRotation();
+	RightRot.Pitch = 0.0f;
+	RightRot.Roll = 0.0f;
 	
-	// Update the move destination to wherever the cursor is pointing at
-	UpdateCachedDestination();
+	// GetPawn() ：获取当前控制器所控制的玩家
+	TObjectPtr<APawn> ControlledPawn = GetPawn();
 	
-	// Move towards mouse pointer or touch
-	APawn* ControlledPawn = GetPawn();
-	if (ControlledPawn != nullptr)
+	// add the forward input
+	if (ControlledPawn)
 	{
-		FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
-		ControlledPawn->AddMovementInput(WorldDirection, 1.0, false);
+		ControlledPawn->AddMovementInput(ForwardRot.RotateVector(FVector::ForwardVector), InputVector.X + InputVector.Y);
+
+		// add the right input
+		ControlledPawn->AddMovementInput(RightRot.RotateVector(FVector::RightVector), InputVector.X - InputVector.Y);
 	}
 }
 
-void AAshFarmPlayerController::OnSetDestinationReleased()
+// 缩放相机
+void AAshFarmPlayerController::ZoomCamera(const FInputActionValue& Value)
 {
-	// If it was a short press
-	if (FollowTime <= ShortPressThreshold)
+	float ZoomDelta = Value.Get<float>();
+
+	// Cast to
+	TObjectPtr<AAshFarmCharacter> AshFarmCharacter = Cast<AAshFarmCharacter>(GetPawn());
+
+	if(AshFarmCharacter)
 	{
-		// We move there and spawn some particles
-		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, CachedDestination);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, CachedDestination, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
-	}
-
-	FollowTime = 0.f;
-}
-
-// Triggered every frame when the input is held down
-void AAshFarmPlayerController::OnTouchTriggered()
-{
-	bIsTouch = true;
-	OnSetDestinationTriggered();
-}
-
-void AAshFarmPlayerController::OnTouchReleased()
-{
-	bIsTouch = false;
-	OnSetDestinationReleased();
-}
-
-void AAshFarmPlayerController::UpdateCachedDestination()
-{
-	// We look for the location in the world where the player has pressed the input
-	FHitResult Hit;
-	bool bHitSuccessful = false;
-	if (bIsTouch)
-	{
-		bHitSuccessful = GetHitResultUnderFinger(ETouchIndex::Touch1, ECollisionChannel::ECC_Visibility, true, Hit);
-	}
-	else
-	{
-		bHitSuccessful = GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
-	}
-
-	// If we hit a surface, cache the location
-	if (bHitSuccessful)
-	{
-		CachedDestination = Hit.Location;
+		AshFarmCharacter->ZoomCamera(ZoomDelta);
 	}
 }
