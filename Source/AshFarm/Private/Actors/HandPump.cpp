@@ -27,6 +27,19 @@ void AHandPump::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// ==== 自然散热 ======
+	if(CurrentHeat > 0.0f && !bIsPumping)
+	{
+		CurrentHeat -= CooldownRate * DeltaTime;
+		CurrentHeat = FMath::Clamp(CurrentHeat, 0.0f, MaxHeat);
+
+		if(bOverHeat && CurrentHeat <= 0.0f)
+		{
+			bOverHeat = false;
+			UE_LOG(A_LogAshFarm, Warning, TEXT("手压井: %s 已冷却, 可以继续泵水"), *DeviceID.ToString());
+		}
+	}
+
 }
 
 bool AHandPump::IsBroken() const
@@ -94,7 +107,12 @@ float AHandPump::PumpWater()
 			// float LastWater = CurrentWater; 
 			// CurrentWater = FMath::Clamp(CurrentWater + AddWaterPerTime, 0.0f, MaxWater);
 
-			
+			if(bOverHeat)
+			{
+				UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 已过热, 无法继续泵水"), *DeviceID.ToString());
+				return 0.0f;
+			}
+
 			// 检查手压井是否有仓库
 			/*
 				IsValid:
@@ -108,8 +126,20 @@ float AHandPump::PumpWater()
 				return 0.0f;
 			}
 
+			bIsPumping = true;
+
 			// 往 Inventory 仓库水箱内装水
 			int32 AddWater = Inventory->AddResource(EResourcesType::Water, AddWaterPerTime);
+
+			// 增加热量
+			CurrentHeat += HeatPerUse;
+			CurrentHeat = FMath::Clamp(CurrentHeat, 0.0f, MaxHeat);
+
+			if(CurrentHeat >= MaxHeat)
+			{
+				bOverHeat = true;
+				UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 已过热, 请等待冷却"), *DeviceID.ToString());
+			}
 
 			// 耐久度损耗
 			Durability = FMath::Clamp(Durability - DurabilityLossPerPump, 0.0f, MaxDurability);
@@ -130,6 +160,8 @@ float AHandPump::PumpWater()
 
 			// TCHAR*
 			//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("手压井ID: %s, 当前水位: %f, 泵水次数: %d"), *DeviceID.ToString(), CurrentWater, PumpCount));
+
+			bIsPumping = false;
 
 			return AddWater;
 		}
@@ -319,5 +351,18 @@ void AHandPump::OnInteract_Implementation()
 
 bool AHandPump::IsInteractable_Implementation() const
 {
-	return Durability > 0.0f;
+	return Durability > 0.0f && !bOverHeat;
+}
+
+// 获取当前热量占比
+float AHandPump::GetHeatPercentage() const
+{
+	ensure(MaxHeat > 0.0f);
+
+	if(MaxHeat == 0.0f)
+	{
+		return 0.0f;
+	}
+
+	return CurrentHeat / MaxHeat;
 }

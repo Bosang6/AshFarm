@@ -45,6 +45,37 @@ public:
 	TObjectPtr<AInventory> Inventory = nullptr;
 
 	// ======================
+	// 冷却系统
+	// ======================
+	#pragma region 冷却系统
+
+	// 当前热量
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "冷却系统", meta = (DisplayName = "当前热量"))
+	float CurrentHeat = 0.0f; 
+
+	// 最大热量
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "冷却系统", meta = (DisplayName = "最大热量", ClampMin = "50"))
+	float MaxHeat = 100.0f; 
+
+	// 是否过热
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "冷却系统", meta = (DisplayName = "是否过热"))
+	bool bOverHeat = false; 
+
+	// 自然散热速率
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "冷却系统", meta = (DisplayName = "自然散热速率", ClampMin = "1"))
+	float CooldownRate = 15.0f; 
+
+	// 每次使用增加的热量
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "冷却系统", meta = (DisplayName = "每次使用增加的热量",  ClampMin = "1"))
+	float HeatPerUse = 15.0f; 
+
+	// 获取当前热量占比
+	UFUNCTION(BlueprintCallable, Category = "冷却系统", meta = (DisplayName = "获取当前热量占比"))
+	float GetHeatPercentage() const;
+
+	#pragma endregion
+
+	// ======================
 	// 水位参数
 	// ======================
 	#pragma region 水位参数
@@ -62,6 +93,7 @@ public:
 	float AddWaterPerTime = HandPumpDefaults::DEFAULT_ADD_WATER_PER_TIME;
 
 	#pragma endregion
+
 	// ======================
 	// 手压井状态
 	// ======================
