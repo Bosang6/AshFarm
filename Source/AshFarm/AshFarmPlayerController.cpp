@@ -119,32 +119,13 @@ void AAshFarmPlayerController::SelectClick(const FInputActionValue& Value)
 		return;
 	}
 
-	if(TObjectPtr<AInventory> Inventory = Cast<AInventory>(ClickedActor))
+	// 判断对象是否实现了 UInteractable 这个接口类
+	if(ClickedActor->Implements<UInteractable>())
 	{
-		Inventory->PrintResourceInventory();
-	}
+		// 若实现，则执行对象已实现的 OnSelected 接口函数
+		IInteractable::Execute_OnSelected(ClickedActor);
 
-	if(TObjectPtr<APlantBed> PlantBed = Cast<APlantBed>(ClickedActor))
-	{
-		PlantBed->PrintState();
-	}
-
-	if(TObjectPtr<AHandPump> HandPump = Cast<AHandPump>(ClickedActor))
-	{
-		HandPump->PrintState();
-	}
-
-	if(SelectedActor && SelectedActor == ClickedActor)
-	{
-		UE_LOG(LogAshFarm, Error, TEXT("对Actor: %s 进行交互"), *SelectedActor->GetName());
-	
-		if(Cast<AHandPump>(SelectedActor))
-		{
-			Cast<AHandPump>(SelectedActor)->PumpWater();
-		}
-	}
-	else
-	{
+		// 选中新的 Actor
 		SelectedActor = ClickedActor;
 	}
 }
@@ -192,7 +173,7 @@ TObjectPtr<AActor> AAshFarmPlayerController::LineTrace()
 
 	if(bHit && IsValid(HitResult.GetActor()))
 	{
-		UE_LOG(LogAshFarm, Error, TEXT("检测到的Actor: %s"), *HitResult.GetActor()->GetName());
+		UE_LOG(LogAshFarm, Error, TEXT("点击到的Actor: %s"), *HitResult.GetActor()->GetName());
 		return HitResult.GetActor();
 	}
 	else
