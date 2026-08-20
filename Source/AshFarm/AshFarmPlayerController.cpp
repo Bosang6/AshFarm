@@ -13,6 +13,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
 #include "Actors/HandPump.h"
+#include "Inventory/Inventory.h"
+#include "Actors/PlantBed.h"
+#include "Actors/HandPump.h"
 #include "AshFarm.h"
 
 AAshFarmPlayerController::AAshFarmPlayerController()
@@ -109,9 +112,29 @@ void AAshFarmPlayerController::ZoomCamera(const FInputActionValue& Value)
 // 选择点击
 void AAshFarmPlayerController::SelectClick(const FInputActionValue& Value)
 {
-	TObjectPtr<AActor> TracedActor = LineTrace();
+	TObjectPtr<AActor> ClickedActor = LineTrace();
 
-	if(SelectedActor && SelectedActor == TracedActor)
+	if(!ClickedActor)
+	{
+		return;
+	}
+
+	if(TObjectPtr<AInventory> Inventory = Cast<AInventory>(ClickedActor))
+	{
+		Inventory->PrintResourceInventory();
+	}
+
+	if(TObjectPtr<APlantBed> PlantBed = Cast<APlantBed>(ClickedActor))
+	{
+		PlantBed->PrintState();
+	}
+
+	if(TObjectPtr<AHandPump> HandPump = Cast<AHandPump>(ClickedActor))
+	{
+		HandPump->PrintState();
+	}
+
+	if(SelectedActor && SelectedActor == ClickedActor)
 	{
 		UE_LOG(LogAshFarm, Error, TEXT("对Actor: %s 进行交互"), *SelectedActor->GetName());
 	
@@ -122,7 +145,7 @@ void AAshFarmPlayerController::SelectClick(const FInputActionValue& Value)
 	}
 	else
 	{
-		SelectedActor = TracedActor;
+		SelectedActor = ClickedActor;
 	}
 }
 

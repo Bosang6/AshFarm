@@ -40,8 +40,6 @@ void AInventory::BeginPlay()
 void AInventory::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	PrintResourceInventory();
 }
 
 // 获取资源类型文本

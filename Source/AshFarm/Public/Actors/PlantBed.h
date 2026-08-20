@@ -75,10 +75,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "设置土壤肥力"))
 	void SetSoliFertility(float Fertility);
 
-	// 获取所有种植床实例的数量
-	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "获取所有种植床实例的数量"))
-	static int32 GetTotalCount();
-
 	// 获取生长速度
 	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "获取生长速度"))
 	float GetGrowthSpeed() const;
@@ -118,6 +114,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "收获植物"))
 	void Harvest();
 
+	// 打印状态
+	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "打印状态"))
+	void PrintState();
+
 	// ==============
 	// 统计数据
 	// ==============
@@ -125,6 +125,10 @@ public:
 	// 土壤状态转换计数
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "土壤", meta = (DisplayName = "状态转换计数"))
 	int32 TransitionCount = 0;
+
+	// 获取所有种植床实例的数量
+	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "获取所有种植床实例的数量"))
+	static int32 GetTotalCount();
 
 protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Root")

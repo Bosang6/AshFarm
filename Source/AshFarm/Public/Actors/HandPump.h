@@ -163,6 +163,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "手压井状态", meta = (DisplayName = "获取当前耐久度占比"))
 	float GetDurabilityPercentage() const;
 
+	// 打印状态
+	UFUNCTION(BlueprintCallable, Category = "手压井状态", meta = (DisplayName = "打印状态"))
+	void PrintState();
+
 
 protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Root")

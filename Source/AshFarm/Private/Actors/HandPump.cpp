@@ -290,3 +290,28 @@ FString AHandPump::Maintain()
 
 	return Report;
 }
+
+// 打印状态
+void AHandPump::PrintState()
+{
+	FString PrintString = TEXT("==== 手压井状态 ====");
+
+	PrintString += FString::Printf(
+		TEXT("\n当前耐久度: %f, 当前修复次数: %d, 当前泵水次数: %d"),
+		GetDurabilityPercentage(),
+		RepairAttempts,
+		PumpCount
+	);
+
+	FVector TextLocation = GetActorLocation() + FVector(0.0f, 0.0f, 200.0f); // 土壤肥力文本位置
+		
+	// DEBUG 打印信息
+	DrawDebugString(
+		GetWorld(), 
+		TextLocation, 
+		PrintString, 
+		nullptr, 
+		FColor::White, 
+		0.5f	//文本显示时间
+	); 
+}
