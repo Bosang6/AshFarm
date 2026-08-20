@@ -7,6 +7,7 @@
 
 #include "Inventory/InventoryTypes.h"
 #include "Plants/PlantBase.h"
+#include "Interfaces/Interactable.h"
 
 #include "Inventory.generated.h"
 
@@ -15,7 +16,7 @@ class UStaticMeshComponent;
 class UBoxComponent;
 
 UCLASS()
-class ASHFARM_API AInventory : public AActor
+class ASHFARM_API AInventory : public AActor, public IInteractable
 {
 	GENERATED_BODY()
 	
@@ -103,6 +104,10 @@ public:
 	// 检查种子类型是否已经解锁
 	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "检查种子类型是否已经解锁"))
 	bool IsPlantTypeUnlocked(TSubclassOf<UPlantBase> PlantType) const;
+
+	// ========== 接口实现 ==============
+	virtual void OnSelected_Implementation() override;
+	virtual void OnInteract_Implementation() override;
 
 	// =================
 	// 数据统计 排序

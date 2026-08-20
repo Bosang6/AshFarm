@@ -519,6 +519,6 @@ void APlantBed::OnSelected_Implementation()
 // 交互时
 void APlantBed::OnInteract_Implementation()
 {
-
+	Harvest();
 }
 

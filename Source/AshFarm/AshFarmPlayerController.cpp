@@ -119,6 +119,16 @@ void AAshFarmPlayerController::SelectClick(const FInputActionValue& Value)
 		return;
 	}
 
+	if(IsValid(SelectedActor) && ClickedActor == SelectedActor)
+	{
+		// 交互
+		if(ClickedActor->Implements<UInteractable>())
+		{
+			IInteractable::Execute_OnInteract(ClickedActor);
+			return;
+		}
+	}
+
 	// 判断对象是否实现了 UInteractable 这个接口类
 	if(ClickedActor->Implements<UInteractable>())
 	{

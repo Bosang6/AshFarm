@@ -315,3 +315,19 @@ void AHandPump::PrintState()
 		0.5f	//文本显示时间
 	); 
 }
+
+// ============== 
+// 接口实现 
+// ==============
+
+// 选中时
+void AHandPump::OnSelected_Implementation()
+{
+	PrintState();
+}
+
+// 交互时
+void AHandPump::OnInteract_Implementation()
+{
+	PumpWater();
+}

@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interfaces/Interactable.h"
+
 #include "HandPump.generated.h"
 
 class AInventory;
@@ -29,7 +31,7 @@ namespace HandPumpDefaults
 }
 
 UCLASS()
-class ASHFARM_API AHandPump : public AActor
+class ASHFARM_API AHandPump : public AActor, public IInteractable
 {
 	GENERATED_BODY()
 	
@@ -143,6 +145,10 @@ public:
 
 	UFUNCTION(CallInEditor, Category = "手压井功能", meta = (DisplayName = "测试修复"))
 	void TestRepair(){ Repair(); }
+
+	// ========== 接口实现 ==============
+	virtual void OnSelected_Implementation() override;
+	virtual void OnInteract_Implementation() override;
 
 	// ======================
 	// 统计和数据函数
