@@ -334,5 +334,5 @@ void AHandPump::OnInteract_Implementation()
 
 bool AHandPump::IsInteractable_Implementation() const
 {
-	return false;
+	return Durability > 0.0f;
 }

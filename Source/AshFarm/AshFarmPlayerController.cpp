@@ -116,6 +116,7 @@ void AAshFarmPlayerController::SelectClick(const FInputActionValue& Value)
 
 	if(!ClickedActor)
 	{
+		SelectedActor = nullptr;
 		return;
 	}
 
@@ -130,6 +131,20 @@ void AAshFarmPlayerController::SelectClick(const FInputActionValue& Value)
 				IInteractable::Execute_OnInteract(ClickedActor);
 				return;
 			}
+			else
+			{
+				if(!GetWorld()) return;
+
+				DrawDebugString(
+					GetWorld(),
+					ClickedActor->GetActorLocation(),
+					TEXT("当前状态不可交互"),
+					nullptr,
+					FColor::Red,
+					0.5f
+				);
+
+			}
 		}
 	}
 
@@ -141,6 +156,10 @@ void AAshFarmPlayerController::SelectClick(const FInputActionValue& Value)
 
 		// 选中新的 Actor
 		SelectedActor = ClickedActor;
+	}
+	else
+	{
+		SelectedActor = nullptr;
 	}
 }
 
