@@ -22,6 +22,10 @@ class ASHFARM_API AInventory : public AActor
 public:	
 	AInventory();
 
+	// 可接受资源类型
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "仓库", meta = (DisplayName = "可接受资源类型"))
+	TSet<EResourcesType> AcceptedTypes;
+
 	// =================
 	// 仓库数据
 	// =================

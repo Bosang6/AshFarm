@@ -55,6 +55,8 @@ FString AInventory::GetResourceTypeText(EResourcesType Type) const
 			return TEXT("木材");
 		case EResourcesType::Soil :
 			return TEXT("泥土");
+		case EResourcesType::Fertility :
+			return TEXT("肥料");
 		case EResourcesType::Waste :
 			return TEXT("废料");
 		case EResourcesType::Gold :
@@ -74,6 +76,14 @@ int32 AInventory::AddResource(EResourcesType Type, int32 Count)
 	if(Count <= 0)
 	{
 		UE_LOG(A_LogAshFarm, Warning, TEXT("AddResource: 添加资源数量必须大于0"));
+		return 0;
+	}
+
+	// 如果接受列表为空，则接受任意资源
+	// 检查资源类型是否在可接受列表中
+	if(!AcceptedTypes.Contains(Type) && !AcceptedTypes.IsEmpty())
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("AddResource: 资源类型 %s 不在可接受列表中"), *GetResourceTypeText(Type));
 		return 0;
 	}
 

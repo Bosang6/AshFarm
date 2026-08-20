@@ -119,33 +119,33 @@ void APlantBed::Tick(float DeltaTime)
 
 		UpdatePlantMesh();
 
-		FVector TextLocation = GetActorLocation() + FVector(0.0f, 0.0f, 100.0f); // 土壤肥力文本位置
+		// FVector TextLocation = GetActorLocation() + FVector(0.0f, 0.0f, 100.0f); // 土壤肥力文本位置
 		
 		// DEBUG 打印信息
-		DrawDebugString(
-			GetWorld(), 
-			TextLocation, 
-			FString::Printf(TEXT("种植床ID: %d \n\n	\
-					土壤类型: %s, 土壤肥力: %f, 土壤品质: %s, 土壤湿度: %f \n\n	\
-					目前作物: %s, 生长进度: %s (%f %s) - %s, 逆境值: %2f, 品质: %s \n\n \
-					预计产量: %f"), 
-				BedID,
-				*GetSoilTypeText(SoilType), 
-				SoilFertility, 
-				*GetSoilQualityText(SoilQuality), 
-				Moisture,
-				*CurrentPlant->GetPlantName(),
-				*CurrentPlant->GetGrowthStageText(CurrentPlant->GetGrowthStage()),
-				CurrentPlant->GrowthProgress,
-				*CurrentPlant->GetGrowthTimeText(),
-				CurrentPlant->IsDead() ? TEXT("已死亡") : TEXT("正常"),
-				CurrentPlant->Stress,
-				*CurrentPlant->GetQualityText(CurrentPlant->CurrentQuality),
-				CurrentPlant->CalculateHarvest()
-			), 
-			nullptr, 
-			CurrentPlant->IsDead() ? FColor::Red : FColor::White, 
-			DeltaTime); 
+		// DrawDebugString(
+		// 	GetWorld(), 
+		// 	TextLocation, 
+		// 	FString::Printf(TEXT("种植床ID: %d \n\n	\
+		// 			土壤类型: %s, 土壤肥力: %f, 土壤品质: %s, 土壤湿度: %f \n\n	\
+		// 			目前作物: %s, 生长进度: %s (%f %s) - %s, 逆境值: %2f, 品质: %s \n\n \
+		// 			预计产量: %f"), 
+		// 		BedID,
+		// 		*GetSoilTypeText(SoilType), 
+		// 		SoilFertility, 
+		// 		*GetSoilQualityText(SoilQuality), 
+		// 		Moisture,
+		// 		*CurrentPlant->GetPlantName(),
+		// 		*CurrentPlant->GetGrowthStageText(CurrentPlant->GetGrowthStage()),
+		// 		CurrentPlant->GrowthProgress,
+		// 		*CurrentPlant->GetGrowthTimeText(),
+		// 		CurrentPlant->IsDead() ? TEXT("已死亡") : TEXT("正常"),
+		// 		CurrentPlant->Stress,
+		// 		*CurrentPlant->GetQualityText(CurrentPlant->CurrentQuality),
+		// 		CurrentPlant->CalculateHarvest()
+		// 	), 
+		// 	nullptr, 
+		// 	CurrentPlant->IsDead() ? FColor::Red : FColor::White, 
+		// 	DeltaTime); 
 	}
 
 }

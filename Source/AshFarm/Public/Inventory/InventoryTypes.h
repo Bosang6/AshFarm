@@ -7,13 +7,14 @@
 UENUM(BlueprintType)
 enum class EResourcesType : uint8
 {
-    Water   UMETA(DisplayName = "水"),
-    Wood    UMETA(DisplayName = "木材"),
-    Soil    UMETA(DisplayName = "泥土"),
-    Waste   UMETA(DisplayName = "废料"),
-    Gold    UMETA(DisplayName = "金币"),
-    Tool    UMETA(DisplayName = "工具"),
-    Plant   UMETA(DisplayName = "种子"),
+    Water       UMETA(DisplayName = "水"),
+    Wood        UMETA(DisplayName = "木材"),
+    Soil        UMETA(DisplayName = "泥土"),
+    Fertility   UMETA(DisplayName = "肥料"),
+    Waste       UMETA(DisplayName = "废料"),
+    Gold        UMETA(DisplayName = "金币"),
+    Tool        UMETA(DisplayName = "工具"),
+    Plant       UMETA(DisplayName = "种子"),
 };
 
 // 排序类型
