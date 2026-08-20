@@ -33,4 +33,9 @@ public:
 	// 执行交互
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "交互")
 	void OnInteract();
+
+	// BlueprintNativeEvent：C++ 默认实现 + 蓝图可覆盖
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "交互")
+	bool IsInteractable() const;
+	virtual bool IsInteractable_Implementation() const { return true; }  // ← 内联默认实现
 };

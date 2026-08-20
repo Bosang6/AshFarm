@@ -149,6 +149,7 @@ public:
 	// ========== 接口实现 ==============
 	virtual void OnSelected_Implementation() override;
 	virtual void OnInteract_Implementation() override;
+	virtual bool IsInteractable_Implementation() const override;
 
 	// ======================
 	// 统计和数据函数

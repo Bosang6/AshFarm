@@ -124,8 +124,12 @@ void AAshFarmPlayerController::SelectClick(const FInputActionValue& Value)
 		// 交互
 		if(ClickedActor->Implements<UInteractable>())
 		{
-			IInteractable::Execute_OnInteract(ClickedActor);
-			return;
+			// 交互
+			if(IInteractable::Execute_IsInteractable(ClickedActor))
+			{
+				IInteractable::Execute_OnInteract(ClickedActor);
+				return;
+			}
 		}
 	}
 

@@ -331,3 +331,8 @@ void AHandPump::OnInteract_Implementation()
 {
 	PumpWater();
 }
+
+bool AHandPump::IsInteractable_Implementation() const
+{
+	return false;
+}
