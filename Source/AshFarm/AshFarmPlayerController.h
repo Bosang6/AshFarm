@@ -69,6 +69,13 @@ public:
 	/** Constructor */
 	AAshFarmPlayerController();
 
+	// 选中的Actor
+	TObjectPtr<AActor> SelectedActor;
+
+	// 调试：是否显示调试线
+	UPROPERTY(EditAnywhere, Category = "Debug", meta = (DisplayName = "显示调试线"))
+	bool bDebug = false;
+
 protected:
 
 	/** Initialize input bindings */

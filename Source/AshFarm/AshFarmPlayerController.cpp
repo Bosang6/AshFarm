@@ -108,5 +108,52 @@ void AAshFarmPlayerController::ZoomCamera(const FInputActionValue& Value)
 // 选择点击
 void AAshFarmPlayerController::SelectClick(const FInputActionValue& Value)
 {
+	// 把鼠标屏幕坐标转成世界空间坐标的位置和方向
+	// Deproject = 2D屏幕 -> 3D空间
+	FVector WorldLocation, WorldDirection;
+	if(!this->DeprojectMousePositionToWorld(WorldLocation, WorldDirection))
+	{
+		SelectedActor = nullptr;
+		return;
+	}
 
+	// 射线起点和射线末端
+	FVector TraceStart = WorldLocation;
+	FVector TraceEnd = WorldLocation + WorldDirection * 5000.0f;
+
+	// 碰撞查询参数: 忽略自己
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	// 执行射线检测
+	FHitResult HitResult;
+	bool bHit = GetWorld()->LineTraceSingleByChannel(
+		HitResult,			// 输出：命中结果
+		TraceStart,			// 输入：射线起点
+		TraceEnd,			// 输入：射线终点
+		ECC_Visibility,		// 碰撞通道：Visibility
+		QueryParams			// 查询参数
+	);
+
+	// 调试画线
+	if(bDebug)
+	{
+		// 参数：世界、起点、终点、颜色、是否持久(false=只画一帧)、持续时间、深度优先级、线宽
+		DrawDebugLine(GetWorld(), TraceStart, TraceEnd, bHit ? FColor::Green : FColor::Red, false, 10.0f, 0, 2.0f);
+		if(bHit)
+		{
+			DrawDebugPoint(GetWorld(), HitResult.ImpactPoint, 10.0f, FColor::Yellow, false, 10.0f);
+		}
+	}
+
+
+	if(bHit && IsValid(HitResult.GetActor()))
+	{
+		SelectedActor = HitResult.GetActor();
+		UE_LOG(LogAshFarm, Error, TEXT("选中的Actor: %s"), *SelectedActor->GetName());
+	}
+	else
+	{
+		SelectedActor = nullptr;
+	}
 }
