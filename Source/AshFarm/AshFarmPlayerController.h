@@ -81,6 +81,9 @@ protected:
 	/** Initialize input bindings */
 	virtual void SetupInputComponent() override;
 
+	// 射线检测
+	TObjectPtr<AActor> LineTrace();
+
 	void MoveCamera(const FInputActionValue& Value);  // 移动相机
 	void ZoomCamera(const FInputActionValue& Value);  // 缩放相机
 	void SelectClick(const FInputActionValue& Value); // 选择点击

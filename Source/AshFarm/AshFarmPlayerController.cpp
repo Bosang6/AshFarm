@@ -12,6 +12,7 @@
 #include "InputActionValue.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
+#include "Actors/HandPump.h"
 #include "AshFarm.h"
 
 AAshFarmPlayerController::AAshFarmPlayerController()
@@ -108,13 +109,32 @@ void AAshFarmPlayerController::ZoomCamera(const FInputActionValue& Value)
 // 选择点击
 void AAshFarmPlayerController::SelectClick(const FInputActionValue& Value)
 {
+	TObjectPtr<AActor> TracedActor = LineTrace();
+
+	if(SelectedActor && SelectedActor == TracedActor)
+	{
+		UE_LOG(LogAshFarm, Error, TEXT("对Actor: %s 进行交互"), *SelectedActor->GetName());
+	
+		if(Cast<AHandPump>(SelectedActor))
+		{
+			Cast<AHandPump>(SelectedActor)->PumpWater();
+		}
+	}
+	else
+	{
+		SelectedActor = TracedActor;
+	}
+}
+
+// 射线检测
+TObjectPtr<AActor> AAshFarmPlayerController::LineTrace()
+{
 	// 把鼠标屏幕坐标转成世界空间坐标的位置和方向
 	// Deproject = 2D屏幕 -> 3D空间
 	FVector WorldLocation, WorldDirection;
 	if(!this->DeprojectMousePositionToWorld(WorldLocation, WorldDirection))
 	{
-		SelectedActor = nullptr;
-		return;
+		return nullptr;
 	}
 
 	// 射线起点和射线末端
@@ -149,11 +169,11 @@ void AAshFarmPlayerController::SelectClick(const FInputActionValue& Value)
 
 	if(bHit && IsValid(HitResult.GetActor()))
 	{
-		SelectedActor = HitResult.GetActor();
-		UE_LOG(LogAshFarm, Error, TEXT("选中的Actor: %s"), *SelectedActor->GetName());
+		UE_LOG(LogAshFarm, Error, TEXT("检测到的Actor: %s"), *HitResult.GetActor()->GetName());
+		return HitResult.GetActor();
 	}
 	else
 	{
-		SelectedActor = nullptr;
+		return nullptr;
 	}
 }
