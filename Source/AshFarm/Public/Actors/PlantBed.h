@@ -67,6 +67,18 @@ public:
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "土壤", meta = (DisplayName = "ID", ClampMin = "0", ClampMax = "5"))
 	int32 BedID = 0;
 
+	// 相邻种植床
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "种植", meta = (DisplayName = "邻居种植床"))
+	TSet<TObjectPtr<APlantBed>> NeighborBeds;
+
+	// 相邻种植床检测距离
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "种植", meta = (DisplayName = "相邻种植床检测距离"))
+	float NeighborDetectDistance = 300.0f;
+
+	// =============
+	// 功能函数
+	// =============
+
 	// 获取土壤肥力
 	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "获取土壤肥力"))
 	float GetSoliFertility() const; // const 表示这个函数不会修改类的变量
@@ -165,6 +177,11 @@ protected:
 	// 更新植物网格体
 	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "更新植物网格体"))
 	void UpdatePlantMesh();
+
+	// 初始化相邻种植床
+	UFUNCTION(BlueprintCallable, Category = "种植", meta = (DisplayName = "初始化相邻种植床"))
+	void InitNeighborBeds();
+
 
 public:	
 	virtual void Tick(float DeltaTime) override;

@@ -6,6 +6,7 @@
 #include "DrawDebugHelpers.h"
 #include "AshFarm.h"
 #include "Plants/PlantBase.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 int32 APlantBed::TotalCount = 0;
 
@@ -66,6 +67,8 @@ void APlantBed::BeginPlay()
 
 	TransitionCount = 0;  // 初始化土壤状态变换
 	APlantBed::TotalCount++;
+
+	InitNeighborBeds();
 }
 
 // Called every frame
@@ -415,16 +418,10 @@ void APlantBed::Harvest()
 // 打印状态
 void APlantBed::PrintState()
 {
-	FVector TextLocation = GetActorLocation() + FVector(0.0f, 0.0f, 100.0f); // 土壤肥力文本位置
-		
-	//DEBUG 打印信息
-	DrawDebugString(
-		GetWorld(), 
-		TextLocation, 
-		FString::Printf(TEXT("种植床ID: %d \n\n	\
+	FString PrintString = FString::Printf(TEXT("种植床ID: %d \n\n	\
 				土壤类型: %s, 土壤肥力: %f, 土壤品质: %s, 土壤湿度: %f \n\n	\
 				目前作物: %s, 生长进度: %s (%f %s) - %s, 逆境值: %2f, 品质: %s \n\n \
-				预计产量: %f"), 
+				预计产量: %f \n\n"), 
 			BedID,
 			*GetSoilTypeText(SoilType), 
 			SoilFertility, 
@@ -438,8 +435,73 @@ void APlantBed::PrintState()
 			CurrentPlant->Stress,
 			*CurrentPlant->GetQualityText(CurrentPlant->CurrentQuality),
 			CurrentPlant->CalculateHarvest()
-		), 
+		);
+
+	PrintString += FString::Printf(TEXT("相邻种植床数量: %d "), NeighborBeds.Num());
+
+	for(const auto& NeighborBed : NeighborBeds)
+	{
+		PrintString += FString::Printf(TEXT("(%d)"), NeighborBed->BedID);
+	}
+
+	FVector TextLocation = GetActorLocation() + FVector(0.0f, 0.0f, 100.0f); // 土壤肥力文本位置
+		
+	//DEBUG 打印信息
+	DrawDebugString(
+		GetWorld(), 
+		TextLocation, 
+		PrintString, 
 		nullptr, 
 		CurrentPlant->IsDead() ? FColor::Red : FColor::White, 
 		1.5f); 
+}
+
+// 初始化相邻种植床
+void APlantBed::InitNeighborBeds()
+{
+	if(!GetWorld())
+	{
+		return;
+	}
+
+	FVector TraceStart = GetActorLocation();
+	FVector TraceEnd = GetActorLocation();
+
+	TArray<FHitResult> HitResults;
+
+	bool bHit = UKismetSystemLibrary::BoxTraceMulti(
+		GetWorld(),
+		TraceStart,
+		TraceEnd,
+		FVector(NeighborDetectDistance, NeighborDetectDistance, 50.0f), 	// 盒体一半大小
+		GetActorRotation(),													// Box朝向
+		ETraceTypeQuery::TraceTypeQuery1,									// 物体类型查询
+		false, 																// bTraceComplex
+		TArray<AActor*>{this}, 												// Actors to Ignore
+		EDrawDebugTrace::ForDuration,										// DrawDebugType
+		HitResults,
+		true,																// 忽略自己
+		FColor::Red,
+		FColor::Green,
+		1.0f
+	);
+
+	if(!bHit)
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("种植床: %d 没有找相邻的种植床"), BedID);
+		return;
+	}
+
+	for(const auto& Hit : HitResults)
+	{
+		if(TObjectPtr<APlantBed> NeighborActor = Cast<APlantBed>(Hit.GetActor()))
+		{
+			if(NeighborActor == this)
+			{
+				continue;
+			}
+
+			NeighborBeds.Add(NeighborActor);
+		}
+	}
 }
