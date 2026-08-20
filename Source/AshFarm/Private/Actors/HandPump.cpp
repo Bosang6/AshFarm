@@ -10,21 +10,6 @@ AHandPump::AHandPump()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	SetRootComponent(Root);
-
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-
-	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Engine/BasicShapes/Cube.Cube"));
-	if(MeshAsset.Succeeded())
-	{
-		Mesh->SetStaticMesh(MeshAsset.Object.Get());
-	}
-
-	Mesh->AttachToComponent(Root, FAttachmentTransformRules::KeepRelativeTransform);
-
-
 }
 
 // Called when the game starts or when spawned

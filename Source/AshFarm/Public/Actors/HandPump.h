@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interfaces/Interactable.h"
+#include "Building.h"
 
 #include "HandPump.generated.h"
 
@@ -31,7 +32,7 @@ namespace HandPumpDefaults
 }
 
 UCLASS()
-class ASHFARM_API AHandPump : public AActor, public IInteractable
+class ASHFARM_API AHandPump : public ABuilding
 {
 	GENERATED_BODY()
 	
@@ -176,11 +177,6 @@ public:
 
 
 protected:
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Root")
-	TObjectPtr<USceneComponent> Root;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Mesh")
-	TObjectPtr<UStaticMeshComponent> Mesh;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

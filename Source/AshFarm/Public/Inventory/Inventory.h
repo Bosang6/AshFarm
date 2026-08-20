@@ -8,15 +8,15 @@
 #include "Inventory/InventoryTypes.h"
 #include "Plants/PlantBase.h"
 #include "Interfaces/Interactable.h"
+#include "Actors/Building.h"
 
 #include "Inventory.generated.h"
 
 class USceneComponent;
 class UStaticMeshComponent;
-class UBoxComponent;
 
 UCLASS()
-class ASHFARM_API AInventory : public AActor, public IInteractable
+class ASHFARM_API AInventory : public ABuilding
 {
 	GENERATED_BODY()
 	
@@ -124,16 +124,6 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Root")
-	TObjectPtr<USceneComponent> Root;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Mesh", meta = (DisplayName = "植物床网格体"))
-	TObjectPtr<UStaticMeshComponent> Mesh;
-
-	// 碰撞盒组件
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Collision")
-	TObjectPtr<UBoxComponent> CollisionBox;
 
 public:	
 	virtual void Tick(float DeltaTime) override;

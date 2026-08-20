@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Actors/PlantBedTypes.h"
 #include "Interfaces/Interactable.h"
-
+#include "Building.h"
 #include "PlantBed.generated.h"
 
 class UBoxComponent;
@@ -20,7 +20,7 @@ class UPlantBase;
 #define GROWTH_SPEED_FERTILE  1.5f
 
 UCLASS(ClassGroup = "AshFarm|种植系统")
-class ASHFARM_API APlantBed : public AActor, public IInteractable
+class ASHFARM_API APlantBed : public ABuilding
 {
 	GENERATED_BODY()
 	
@@ -149,11 +149,6 @@ public:
 	// =================================
 
 protected:
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Root")
-	TObjectPtr<USceneComponent> Root;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Mesh", meta = (DisplayName = "植物床网格体"))
-	TObjectPtr<UStaticMeshComponent> Mesh;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Mesh", meta = (DisplayName = "植物网格体"))
 	TObjectPtr<UStaticMeshComponent> PlantMesh;
@@ -161,10 +156,6 @@ protected:
 	// 种植点组件
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "PlantingPoint")
 	TObjectPtr<USceneComponent> PlantingPoint;
-
-	// 碰撞盒组件
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Collision")
-	TObjectPtr<UBoxComponent> CollisionBox;
 
 	virtual void BeginPlay() override;
 
