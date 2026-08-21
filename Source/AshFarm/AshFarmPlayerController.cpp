@@ -252,3 +252,29 @@ void AAshFarmPlayerController::ClearSelection()
 	}
 
 }
+
+// 安装功能: 添加组件
+void AAshFarmPlayerController::InstallComponentOnSelected(TSubclassOf<UActorComponent> ComponentClass)
+{
+	if(!IsValid(SelectedActor)) 
+	{	
+		UE_LOG(A_LogAshFarm, Error, TEXT("请先选择一个Actor才能安装组件!"));
+		return;
+	}
+
+	UActorComponent* ExistingComponent = SelectedActor->FindComponentByClass(ComponentClass);
+	if(ExistingComponent)
+	{
+		UE_LOG(A_LogAshFarm, Error, TEXT("该Actor已经存在该组件!"));
+		return;
+	}
+
+	/*
+		参数解释：
+		1. 需要实例化的组件
+		2. 是否手动Attach, true需要自己手动Attach，否则挂载在Root下
+		3. 位置与旋转关系
+		4. 是否需要延迟
+	*/
+	SelectedActor->AddComponentByClass(ComponentClass, false, FTransform::Identity, false);
+}

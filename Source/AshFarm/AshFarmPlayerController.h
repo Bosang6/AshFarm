@@ -70,11 +70,16 @@ public:
 	AAshFarmPlayerController();
 
 	// 选中的Actor
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "选择", meta = (DisplayName = "选中的Actor"))
 	TObjectPtr<AActor> SelectedActor;
 
 	// 调试：是否显示调试线
 	UPROPERTY(EditAnywhere, Category = "Debug", meta = (DisplayName = "显示调试线"))
 	bool bDebug = false;
+
+	// 安装功能: 添加组件
+	UFUNCTION(BlueprintCallable, Category = "功能组件", meta = (DisplayName = "安装组件"))
+	void InstallComponentOnSelected(TSubclassOf<UActorComponent> ComponentClass);
 
 protected:
 
