@@ -32,6 +32,26 @@ AAshFarmPlayerController::AAshFarmPlayerController()
 	FollowTime = 0.f;
 }
 
+void AAshFarmPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// 加载 组件安装规则表
+	if(!InstallRuleTable)
+	{
+		InstallRuleTable = LoadObject<UDataTable>(nullptr, TEXT("/Game/0_/Comps/DT_InstallRule.DT_InstallRule"));
+	}
+
+	if(!IsValid(InstallRuleTable))
+	{
+		UE_LOG(A_LogAshFarm, Error, TEXT("组件安装规则表加载失败, 请检查 /Game/0_/Comps/DT_InstallRule.DT_InstallRule 是否存在"));
+	}
+	else
+	{
+		UE_LOG(A_LogAshFarm, Error, TEXT("组件安装规则表加载成功, 共加载 %d 条规则"), InstallRuleTable->GetRowNames().Num());
+	}
+}
+
 void AAshFarmPlayerController::SetupInputComponent()
 {
 	// set up gameplay key bindings

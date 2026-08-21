@@ -69,6 +69,10 @@ public:
 	/** Constructor */
 	AAshFarmPlayerController();
 
+	// =========== 组件安装规则 =====================
+	UPROPERTY(EditAnywhere, Category = "组件功能", meta = (DisplayName = "组件安装规则表"))
+	TObjectPtr<UDataTable> InstallRuleTable;
+
 	// 选中的Actor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "选择", meta = (DisplayName = "选中的Actor"))
 	TObjectPtr<AActor> SelectedActor;
@@ -85,6 +89,8 @@ protected:
 
 	/** Initialize input bindings */
 	virtual void SetupInputComponent() override;
+
+	virtual void BeginPlay() override;
 
 	// 射线检测
 	TObjectPtr<AActor> LineTrace();
