@@ -20,6 +20,7 @@ UGreenHouseComponent::UGreenHouseComponent()
 		MeshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("/Engine/BasicShapes/Cube.Cube"));
 	}
 	Mesh->SetStaticMesh(MeshAsset.Object.Get());
+
 }
 
 
