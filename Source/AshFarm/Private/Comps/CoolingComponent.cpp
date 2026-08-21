@@ -21,7 +21,13 @@ void UCoolingComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+	// 组件和对象的构造函数会同时进行，因此Owner不能再构造函数中获取，会报错
+	if(!IsValid(GetOwner()))
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("冷却组件: Owner 无效"));
+		return;
+	}
+	Owner = GetOwner();	
 }
 
 
@@ -41,7 +47,7 @@ void UCoolingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		if(bOverHeat && CurrentHeat <= 0.0f)
 		{
 			bOverHeat = false;
-			UE_LOG(A_LogAshFarm, Warning, TEXT("%s 已冷却, 可以继续使用"), *GetOwner()->GetName());
+			UE_LOG(A_LogAshFarm, Warning, TEXT("%s 已冷却, 可以继续使用"), *Owner->GetName());
 		}
 	}
 }
@@ -56,7 +62,7 @@ void UCoolingComponent::AddHeat()
 	if(CurrentHeat >= MaxHeat)
 	{
 		bOverHeat = true;
-		UE_LOG(A_LogAshFarm, Warning, TEXT("%s 已过热, 请等待冷却"), *GetOwner()->GetName());
+		UE_LOG(A_LogAshFarm, Warning, TEXT("%s 已过热, 请等待冷却"), *Owner->GetName());
 	}
 }
 

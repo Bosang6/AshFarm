@@ -68,6 +68,9 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	// 缓存拥有者
+	TObjectPtr<AActor> Owner;
+
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
