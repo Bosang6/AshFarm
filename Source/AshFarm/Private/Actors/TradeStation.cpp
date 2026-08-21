@@ -8,6 +8,6 @@ void ATradeStation::OnSelected_Implementation()
     Super::OnSelected_Implementation();
 }
 void ATradeStation::OnInteract_Implementation()
-{
-
+{   
+    Super::OnInteract_Implementation();
 }

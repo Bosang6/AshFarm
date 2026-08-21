@@ -510,12 +510,14 @@ void APlantBed::InitNeighborBeds()
 // 选中时
 void APlantBed::OnSelected_Implementation()
 {
+	Super::OnSelected_Implementation();
 	PrintState();
 }
 
 // 交互时
 void APlantBed::OnInteract_Implementation()
 {
+	Super::OnInteract_Implementation();
 	Harvest();
 }
 

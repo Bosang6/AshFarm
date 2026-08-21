@@ -362,11 +362,13 @@ TArray<EResourcesType> AInventory::GetLowStockResources(float ThresholdPercent) 
 // 选中时
 void AInventory::OnSelected_Implementation()
 {
+	Super::OnSelected_Implementation();
 	PrintResourceInventory();
 }
 
 // 交互时
 void AInventory::OnInteract_Implementation()
 {
+	Super::OnInteract_Implementation();
 	// TODO 打开UI面板
 }

@@ -11,7 +11,6 @@
 
 class AInventory;
 class UCoolingComponent;
-class UHighlightComponent;
 
 namespace HandPumpDefaults
 {
@@ -51,12 +50,6 @@ public:
 	// ======================
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "冷却系统", meta = (DisplayName = "冷却组件"))
 	TObjectPtr<UCoolingComponent> CoolingComponent;
-
-	// ======================
-	// 高亮组件
-	// ======================
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "高亮组件", meta = (DisplayName = "冷却组件"))
-	TObjectPtr<UHighlightComponent> HighlightComponent;
 
 	// ======================
 	// 水位参数
@@ -166,7 +159,7 @@ public:
 	virtual void OnSelected_Implementation() override;
 	virtual void OnInteract_Implementation() override;
 	virtual bool IsInteractable_Implementation() const override;
-	virtual void OnUnselected_Implementation();
+	virtual void OnUnselected_Implementation() override;
 
 	// ======================
 	// 统计和数据函数

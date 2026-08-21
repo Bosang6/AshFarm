@@ -9,5 +9,5 @@ void AScrapStation::OnSelected_Implementation()
 }
 void AScrapStation::OnInteract_Implementation()
 {
-
+    Super::OnInteract_Implementation();
 }

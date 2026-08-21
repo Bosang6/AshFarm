@@ -3,6 +3,7 @@
 
 #include "Actors/Building.h"
 #include "Components/BoxComponent.h"
+#include "Comps/HighlightComponent.h"
 #include "AshFarm.h"
 
 // Sets default values
@@ -28,6 +29,8 @@ ABuilding::ABuilding()
 	CollisionBox->SetBoxExtent(FVector{100.0f, 100.0f, 100.0f});
 	CollisionBox->SetRelativeLocation(FVector{0.0f, 0.0f, 20.0f});
 	CollisionBox->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
+
+	HighlightComponent = CreateDefaultSubobject<UHighlightComponent>(TEXT("高亮组件"));
 }
 
 // Called when the game starts or when spawned
@@ -47,8 +50,15 @@ void ABuilding::Tick(float DeltaTime)
 // 选中时逻辑
 void ABuilding::OnSelected_Implementation()
 {
-	UE_LOG(A_LogAshFarm, Warning, TEXT("选中了建筑 %s"), *GetNameSafe(this));
+	HighlightComponent->SetHighlight(true);
 }
+
+// 取消选中时逻辑
+void ABuilding::OnUnselected_Implementation()
+{
+	HighlightComponent->SetHighlight(false);
+}
+
 
 // 交互时逻辑
 void ABuilding::OnInteract_Implementation()

@@ -9,5 +9,5 @@ void AWindPower::OnSelected_Implementation()
 }
 void AWindPower::OnInteract_Implementation()
 {
-
+    Super::OnInteract_Implementation();
 }

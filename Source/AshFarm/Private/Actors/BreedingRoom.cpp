@@ -9,5 +9,5 @@ void ABreedingRoom::OnSelected_Implementation()
 }
 void ABreedingRoom::OnInteract_Implementation()
 {
-
+    Super::OnInteract_Implementation();
 }

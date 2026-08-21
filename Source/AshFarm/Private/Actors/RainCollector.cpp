@@ -9,5 +9,5 @@ void ARainCollector::OnSelected_Implementation()
 }
 void ARainCollector::OnInteract_Implementation()
 {
-
+    Super::OnInteract_Implementation();
 }

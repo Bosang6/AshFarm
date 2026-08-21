@@ -9,5 +9,5 @@ void AFertilizerBin::OnSelected_Implementation()
 }
 void AFertilizerBin::OnInteract_Implementation()
 {
-
+    Super::OnInteract_Implementation();
 }

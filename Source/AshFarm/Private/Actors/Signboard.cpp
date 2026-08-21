@@ -9,5 +9,5 @@ void ASignboard::OnSelected_Implementation()
 }
 void ASignboard::OnInteract_Implementation()
 {
-
+    Super::OnInteract_Implementation();
 }

@@ -9,5 +9,5 @@ void AWoodWorkshop::OnSelected_Implementation()
 }
 void AWoodWorkshop::OnInteract_Implementation()
 {
-
+    Super::OnInteract_Implementation();
 }

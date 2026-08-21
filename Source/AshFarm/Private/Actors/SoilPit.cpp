@@ -9,5 +9,5 @@ void ASoilPit::OnSelected_Implementation()
 }
 void ASoilPit::OnInteract_Implementation()
 {
-
+    Super::OnInteract_Implementation();
 }

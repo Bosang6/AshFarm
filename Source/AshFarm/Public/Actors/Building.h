@@ -12,6 +12,7 @@
 class UBoxComponent;
 class USceneComponent;
 class UStaticMeshComponent;
+class UHighlightComponent;
 
 UCLASS()
 class ASHFARM_API ABuilding : public AActor, public IInteractable
@@ -38,6 +39,13 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Collision")
 	TObjectPtr<UBoxComponent> CollisionBox;
 
+	// ======================
+	// 高亮组件
+	// ======================
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "高亮组件", meta = (DisplayName = "冷却组件"))
+	TObjectPtr<UHighlightComponent> HighlightComponent;
+
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -45,6 +53,7 @@ public:
 	// ========== 接口实现 ==============
 	virtual void OnSelected_Implementation() override;
 	virtual void OnInteract_Implementation() override;
+	virtual void OnUnselected_Implementation() override;
 	// =================================
 
 };
