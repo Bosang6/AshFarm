@@ -3,6 +3,7 @@
 
 #include "Actors/HandPump.h"
 #include "AshFarm.h"
+#include "Comps/CoolingComponent.h"
 #include "Inventory/Inventory.h"
 
 // Sets default values
@@ -10,6 +11,10 @@ AHandPump::AHandPump()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	// 创建组件
+	// CreateDefaultSubobject 只能在构造函数中使用
+	CoolingComponent = CreateDefaultSubobject<UCoolingComponent>(TEXT("冷却组件"));
 }
 
 // Called when the game starts or when spawned
@@ -27,18 +32,7 @@ void AHandPump::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// ==== 自然散热 ======
-	if(CurrentHeat > 0.0f && !bIsPumping)
-	{
-		CurrentHeat -= CooldownRate * DeltaTime;
-		CurrentHeat = FMath::Clamp(CurrentHeat, 0.0f, MaxHeat);
-
-		if(bOverHeat && CurrentHeat <= 0.0f)
-		{
-			bOverHeat = false;
-			UE_LOG(A_LogAshFarm, Warning, TEXT("手压井: %s 已冷却, 可以继续泵水"), *DeviceID.ToString());
-		}
-	}
+	
 
 }
 
@@ -107,7 +101,7 @@ float AHandPump::PumpWater()
 			// float LastWater = CurrentWater; 
 			// CurrentWater = FMath::Clamp(CurrentWater + AddWaterPerTime, 0.0f, MaxWater);
 
-			if(bOverHeat)
+			if(CoolingComponent->bOverHeat)
 			{
 				UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 已过热, 无法继续泵水"), *DeviceID.ToString());
 				return 0.0f;
@@ -131,15 +125,7 @@ float AHandPump::PumpWater()
 			// 往 Inventory 仓库水箱内装水
 			int32 AddWater = Inventory->AddResource(EResourcesType::Water, AddWaterPerTime);
 
-			// 增加热量
-			CurrentHeat += HeatPerUse;
-			CurrentHeat = FMath::Clamp(CurrentHeat, 0.0f, MaxHeat);
-
-			if(CurrentHeat >= MaxHeat)
-			{
-				bOverHeat = true;
-				UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 已过热, 请等待冷却"), *DeviceID.ToString());
-			}
+			
 
 			// 耐久度损耗
 			Durability = FMath::Clamp(Durability - DurabilityLossPerPump, 0.0f, MaxDurability);
@@ -351,18 +337,6 @@ void AHandPump::OnInteract_Implementation()
 
 bool AHandPump::IsInteractable_Implementation() const
 {
-	return Durability > 0.0f && !bOverHeat;
+	return Durability > 0.0f && !CoolingComponent->bOverHeat;
 }
 
-// 获取当前热量占比
-float AHandPump::GetHeatPercentage() const
-{
-	ensure(MaxHeat > 0.0f);
-
-	if(MaxHeat == 0.0f)
-	{
-		return 0.0f;
-	}
-
-	return CurrentHeat / MaxHeat;
-}

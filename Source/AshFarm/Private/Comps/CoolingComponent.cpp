@@ -2,6 +2,7 @@
 
 
 #include "Comps/CoolingComponent.h"
+#include "AshFarm.h"
 
 // Sets default values for this component's properties
 UCoolingComponent::UCoolingComponent()
@@ -29,6 +30,41 @@ void UCoolingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	// ==== 自然散热 ======
+	if(CurrentHeat > 0.0f)
+	{
+		CurrentHeat -= CooldownRate * DeltaTime;
+		CurrentHeat = FMath::Clamp(CurrentHeat, 0.0f, MaxHeat);
+
+		if(bOverHeat && CurrentHeat <= 0.0f)
+		{
+			bOverHeat = false;
+			UE_LOG(A_LogAshFarm, Warning, TEXT("%s 已冷却, 可以继续使用"), *GetOwner()->GetName());
+		}
+	}
 }
 
+// 增加热量
+void UCoolingComponent::AddHeat()
+{
+	CurrentHeat += HeatPerUse;
+	CurrentHeat = FMath::Clamp(CurrentHeat, 0.0f, MaxHeat);
+	if(CurrentHeat >= MaxHeat)
+	{
+		bOverHeat = true;
+		UE_LOG(A_LogAshFarm, Warning, TEXT("%s 已过热, 请等待冷却"), *GetOwner()->GetName());
+	}
+}
+
+// 获取当前热量占比
+float UCoolingComponent::GetHeatPercentage() const
+{
+	ensure(MaxHeat > 0.0f);
+
+	if(MaxHeat == 0.0f)
+	{
+		return 0.0f;
+	}
+
+	return CurrentHeat / MaxHeat;
+}
