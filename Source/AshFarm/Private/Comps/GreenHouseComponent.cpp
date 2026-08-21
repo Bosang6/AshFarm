@@ -12,7 +12,14 @@ UGreenHouseComponent::UGreenHouseComponent()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PlantMesh"));
 	Mesh->AttachToComponent(this, FAttachmentTransformRules::KeepRelativeTransform);
-	// ...
+	
+	// 加载默认静态网格体
+	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/PolygonFarm/Meshes/Buildings/SM_Bld_Greenhouse_01.SM_Bld_Greenhouse_01"));
+	if(!MeshAsset.Succeeded())
+	{
+		MeshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("/Engine/BasicShapes/Cube.Cube"));
+	}
+	Mesh->SetStaticMesh(MeshAsset.Object.Get());
 }
 
 
