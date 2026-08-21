@@ -4,6 +4,7 @@
 #include "Actors/HandPump.h"
 #include "AshFarm.h"
 #include "Comps/CoolingComponent.h"
+#include "Comps/HighlightComponent.h"
 #include "Inventory/Inventory.h"
 
 // Sets default values
@@ -15,6 +16,8 @@ AHandPump::AHandPump()
 	// 创建组件
 	// CreateDefaultSubobject 只能在构造函数中使用
 	CoolingComponent = CreateDefaultSubobject<UCoolingComponent>(TEXT("冷却组件"));
+	HighlightComponent = CreateDefaultSubobject<UHighlightComponent>(TEXT("高亮组件"));
+
 }
 
 // Called when the game starts or when spawned
@@ -338,6 +341,7 @@ void AHandPump::PrintState()
 void AHandPump::OnSelected_Implementation()
 {
 	PrintState();
+	HighlightComponent->SetHighlight(true);
 }
 
 // 交互时
