@@ -20,9 +20,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "冷却系统", meta = (DisplayName = "是否启用冷却系统"))
 	bool bEnabled = true;
 
-	// 设置是否启用
+	// 设置是否启用组件
 	UFUNCTION(BlueprintCallable, Category = "冷却系统", meta = (DisplayName = "设置是否启用"))
 	void SetEnabled(bool Enabled) { bEnabled = Enabled; };
+
+	// 是否启用自然散热
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "冷却系统", meta = (DisplayName = "是否启用自然散热"))
+	bool bEnabledCooling = true;
+
+	// 设置是否启用自然散热
+	UFUNCTION(BlueprintCallable, Category = "冷却系统", meta = (DisplayName = "设置是否启用"))
+	void SetEnabledCooling(bool Enabled) { bEnabledCooling = Enabled; };
 
 #pragma region 冷却系统
 

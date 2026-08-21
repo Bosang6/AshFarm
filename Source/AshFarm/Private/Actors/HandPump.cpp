@@ -91,6 +91,12 @@ float AHandPump::TakeWater(float WaterAmount)
 
 float AHandPump::PumpWater()
 {
+	if(!IsValid(CoolingComponent))
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 没有冷却组件"), *DeviceID.ToString());
+		return 0.0f;
+	}
+
 	// 中等3
 	if(!bIsBroken && CurrentWater < MaxWater)
 	{
@@ -121,11 +127,14 @@ float AHandPump::PumpWater()
 			}
 
 			bIsPumping = true;
+			// 手压井在使用时禁用自然散热
+			CoolingComponent->SetEnabledCooling(false);
 
 			// 往 Inventory 仓库水箱内装水
 			int32 AddWater = Inventory->AddResource(EResourcesType::Water, AddWaterPerTime);
 
-			
+			// 增加热量
+			CoolingComponent->AddHeat();
 
 			// 耐久度损耗
 			Durability = FMath::Clamp(Durability - DurabilityLossPerPump, 0.0f, MaxDurability);
@@ -148,6 +157,8 @@ float AHandPump::PumpWater()
 			//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("手压井ID: %s, 当前水位: %f, 泵水次数: %d"), *DeviceID.ToString(), CurrentWater, PumpCount));
 
 			bIsPumping = false;
+			// 手压井在使用结束时启用自然散热
+			CoolingComponent->SetEnabledCooling(true);
 
 			return AddWater;
 		}

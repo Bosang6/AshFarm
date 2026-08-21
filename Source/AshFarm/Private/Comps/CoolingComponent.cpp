@@ -10,7 +10,7 @@ UCoolingComponent::UCoolingComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
+	PrimaryComponentTick.TickInterval = 0.5f;
 	// ...
 }
 
@@ -30,8 +30,10 @@ void UCoolingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if(!bEnabled) return;
+
 	// ==== 自然散热 ======
-	if(CurrentHeat > 0.0f)
+	if(CurrentHeat > 0.0f && bEnabledCooling)
 	{
 		CurrentHeat -= CooldownRate * DeltaTime;
 		CurrentHeat = FMath::Clamp(CurrentHeat, 0.0f, MaxHeat);
@@ -47,6 +49,8 @@ void UCoolingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 // 增加热量
 void UCoolingComponent::AddHeat()
 {
+	if(!bEnabled) return;
+
 	CurrentHeat += HeatPerUse;
 	CurrentHeat = FMath::Clamp(CurrentHeat, 0.0f, MaxHeat);
 	if(CurrentHeat >= MaxHeat)
