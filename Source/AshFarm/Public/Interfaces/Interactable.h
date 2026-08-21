@@ -30,6 +30,10 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "交互")
 	void OnSelected();
 
+	// 被取消选择时
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "交互")
+	void OnUnselected();
+
 	// 执行交互
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "交互")
 	void OnInteract();

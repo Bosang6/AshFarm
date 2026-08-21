@@ -355,3 +355,9 @@ bool AHandPump::IsInteractable_Implementation() const
 	return Durability > 0.0f && !CoolingComponent->bOverHeat;
 }
 
+// 取消选中时
+void AHandPump::OnUnselected_Implementation()
+{
+	HighlightComponent->SetHighlight(false);
+}
+

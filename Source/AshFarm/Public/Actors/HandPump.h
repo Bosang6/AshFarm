@@ -166,6 +166,7 @@ public:
 	virtual void OnSelected_Implementation() override;
 	virtual void OnInteract_Implementation() override;
 	virtual bool IsInteractable_Implementation() const override;
+	virtual void OnUnselected_Implementation();
 
 	// ======================
 	// 统计和数据函数

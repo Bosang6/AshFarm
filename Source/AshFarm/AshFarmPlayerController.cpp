@@ -116,7 +116,7 @@ void AAshFarmPlayerController::SelectClick(const FInputActionValue& Value)
 
 	if(!ClickedActor)
 	{
-		SelectedActor = nullptr;
+		ClearSelection();
 		return;
 	}
 
@@ -168,6 +168,7 @@ void AAshFarmPlayerController::SelectClick(const FInputActionValue& Value)
 	// 判断对象是否实现了 UInteractable 这个接口类
 	if(ClickedActor->Implements<UInteractable>())
 	{
+		ClearSelection();
 		// 若实现，则执行对象已实现的 OnSelected 接口函数
 		IInteractable::Execute_OnSelected(ClickedActor);
 
@@ -183,7 +184,7 @@ void AAshFarmPlayerController::SelectClick(const FInputActionValue& Value)
 	}
 	else
 	{
-		SelectedActor = nullptr;
+		ClearSelection();
 	}
 }
 
@@ -237,4 +238,17 @@ TObjectPtr<AActor> AAshFarmPlayerController::LineTrace()
 	{
 		return nullptr;
 	}
+}
+
+// 清除选中
+void AAshFarmPlayerController::ClearSelection()
+{
+	if(!IsValid(SelectedActor)) return;
+
+	if(SelectedActor->Implements<UInteractable>())
+	{
+		IInteractable::Execute_OnUnselected(SelectedActor);
+		SelectedActor = nullptr;
+	}
+
 }

@@ -87,6 +87,9 @@ protected:
 	void MoveCamera(const FInputActionValue& Value);  // 移动相机
 	void ZoomCamera(const FInputActionValue& Value);  // 缩放相机
 	void SelectClick(const FInputActionValue& Value); // 选择点击
+
+	// 清除选中
+	void ClearSelection();
 	
 	
 };
