@@ -20,7 +20,6 @@ UGreenHouseComponent::UGreenHouseComponent()
 		MeshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("/Engine/BasicShapes/Cube.Cube"));
 	}
 	Mesh->SetStaticMesh(MeshAsset.Object.Get());
-
 }
 
 
@@ -29,8 +28,18 @@ void UGreenHouseComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	// 获取Owner的包围盒
+	FVector Origin, BoxExtent;
+	GetOwner()->GetActorBounds(false, Origin, BoxExtent);  // 第一个参数：是否考虑碰撞盒的大小
+
+	// 获取当前Mesh的包围盒
+	FVector OriginMesh, BoxExtentMesh;
+	Mesh->GetLocalBounds(OriginMesh, BoxExtentMesh);
+
+	FVector Scale = BoxExtent / BoxExtentMesh;
+
+	// 设置 Mesh 网格体缩放
+	Mesh->SetRelativeScale3D(Scale);
 }
 
 
