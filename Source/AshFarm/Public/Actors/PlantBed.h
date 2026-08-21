@@ -50,11 +50,11 @@ public:
 
 	// 土壤湿度
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "土壤", meta = (DisplayName = "土壤湿度"))
-	float Moisture = 1.0f;
+	float Moisture = 50.0f;
 
 	// 最大土壤湿度
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "土壤", meta = (DisplayName = "最大土壤湿度"))
-	float MaxMoisture = 1.0f;
+	float MaxMoisture = 100.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "土壤", meta = (DisplayName = "土壤温度"))
 	float Temperature = 26.0f;
@@ -87,6 +87,14 @@ public:
 	// 设置土壤肥力
 	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "设置土壤肥力"))
 	void SetSoliFertility(float Fertility);
+
+	// 浇水
+	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "浇水"))
+	void ReceiveMoisture(float InMoisture);
+
+	// 施肥
+	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "施肥"))
+	void ReceiveFertility(float InFertility);
 
 	// 获取生长速度
 	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "获取生长速度"))

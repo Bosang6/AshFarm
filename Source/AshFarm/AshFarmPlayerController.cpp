@@ -63,7 +63,7 @@ void AAshFarmPlayerController::SetupInputComponent()
 		}
 		else
 		{
-			UE_LOG(LogAshFarm, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+			UE_LOG(A_LogAshFarm, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 		}
 	}
 }
@@ -120,6 +120,7 @@ void AAshFarmPlayerController::SelectClick(const FInputActionValue& Value)
 		return;
 	}
 
+	// 同源 再一次点击时 交互
 	if(IsValid(SelectedActor) && ClickedActor == SelectedActor)
 	{
 		// 交互
@@ -147,6 +148,22 @@ void AAshFarmPlayerController::SelectClick(const FInputActionValue& Value)
 			}
 		}
 	}
+	// 不同源，再次点击时 "SelectedActor -> Target (ClickedActor)" 对目标交互
+	else if(IsValid(SelectedActor) && ClickedActor != SelectedActor)
+	{
+		if(SelectedActor->Implements<UInteractable>())
+		{
+			if(IInteractable::Execute_CanInteractWith(SelectedActor, ClickedActor))
+			{
+				IInteractable::Execute_OnInteractWith(SelectedActor, ClickedActor);
+				UE_LOG(A_LogAshFarm, Error, TEXT("[交互] %s -> %s 交互完成"), *GetNameSafe(SelectedActor), *GetNameSafe(ClickedActor));
+			}
+			else
+			{
+				UE_LOG(A_LogAshFarm, Error, TEXT("[交互] %s -> %s 交互失败"), *GetNameSafe(SelectedActor), *GetNameSafe(ClickedActor));
+			}
+		}	
+	}
 
 	// 判断对象是否实现了 UInteractable 这个接口类
 	if(ClickedActor->Implements<UInteractable>())
@@ -156,6 +173,13 @@ void AAshFarmPlayerController::SelectClick(const FInputActionValue& Value)
 
 		// 选中新的 Actor
 		SelectedActor = ClickedActor;
+
+		FString Hint = IInteractable::Execute_GetAsSelectedHint(SelectedActor);
+
+		if(!Hint.IsEmpty())
+		{
+			UE_LOG(A_LogAshFarm, Error, TEXT("[Hint]: %s"), *Hint);
+		}
 	}
 	else
 	{
@@ -206,7 +230,7 @@ TObjectPtr<AActor> AAshFarmPlayerController::LineTrace()
 
 	if(bHit && IsValid(HitResult.GetActor()))
 	{
-		UE_LOG(LogAshFarm, Error, TEXT("点击到的Actor: %s"), *HitResult.GetActor()->GetName());
+		UE_LOG(A_LogAshFarm, Error, TEXT("点击到的Actor: %s"), *HitResult.GetActor()->GetName());
 		return HitResult.GetActor();
 	}
 	else

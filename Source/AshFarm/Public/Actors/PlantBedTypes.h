@@ -15,7 +15,7 @@ namespace PlantBedDefaults
 	static constexpr float FERTILITY_LOSS_PER_SECOND		    	 = 0.01f;   //土壤肥力自然流失量
 	static constexpr float FERTILITY_RECOVER_PER_SECOND		    	 = 0.2f;    //当辐射等级为0时,土壤肥力自然恢复
 	
-	static constexpr float MOISTURE_LOSS_PER_SECOND		    	     = 0.005f;   //土壤水分自然流失量
+	static constexpr float MOISTURE_LOSS_PER_SECOND		    	     = 0.5f;   //土壤水分自然流失量
 	static constexpr float MOISTURE_SALINE_LOSS_MULTI			     = 1.5f;     //乘数, 盐碱地土壤水分流失
 	static constexpr float MOISTURE_POOR_LOSS_MULTI		  		     = 2.5f;     //乘数, 贫瘠土壤水分流失
 	static constexpr float MOISTURE_NORMAL_LOSS_MULTI			     = 1.0f;     //乘数, 贫瘠土壤水分流失

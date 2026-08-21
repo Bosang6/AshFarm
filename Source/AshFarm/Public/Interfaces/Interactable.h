@@ -38,4 +38,22 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "交互")
 	bool IsInteractable() const;
 	virtual bool IsInteractable_Implementation() const { return true; }  // ← 内联默认实现
+
+	// 我（作为 SelectedActor）能不能对 Target 下手？
+	// 默认实现 false：默认情况下，所有对象都不能对别人下手（比如一块石头、一个仓库）。
+	// 只有水箱、堆肥区、NPC 等"工具型 Actor"才覆盖为 true
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "交互")
+	bool CanInteractWith(const AActor* Target) const;
+	virtual bool CanInteractWith_Implementation(const AActor* Target) const { return false; }
+
+	// 我（作为 SelectedActor）对 Target 执行操作
+	// 不强制所有类实现
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "交互")
+	void OnInteractWith(AActor* Target);
+
+	// 当我作为 SelectedActor 被选中时，UI 应该提示什么？
+	// 选中水箱后，鼠标旁边显示"点击浇水"而不是"点击收获"。
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "交互")
+	FString GetAsSelectedHint() const;
+	virtual FString GetAsSelectedHint_Implementation() const{ return TEXT(""); }
 };

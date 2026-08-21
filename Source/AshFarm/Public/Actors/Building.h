@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interfaces/Interactable.h"
+#include "AshFarm.h"
 
 #include "Building.generated.h"
 

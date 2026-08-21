@@ -127,6 +127,20 @@ void APlantBed::SetSoliFertility(float Fertility)
 	SoilFertility = Fertility;
 }
 
+// 浇水
+void APlantBed::ReceiveMoisture(float InMoisture)
+{
+	Moisture += InMoisture;
+	Moisture = FMath::Clamp(Moisture, 0.0f, MaxMoisture);
+}
+
+// 施肥
+void APlantBed::ReceiveFertility(float InFertility)
+{
+	SoilFertility += InFertility;
+	SoilFertility = FMath::Clamp(SoilFertility, 0.0f, MaxSoilFertility);
+}
+
 // 获取所有种植床实例的数量
 int32 APlantBed::GetTotalCount()
 {
