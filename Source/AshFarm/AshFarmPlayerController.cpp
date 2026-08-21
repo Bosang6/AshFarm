@@ -50,6 +50,28 @@ void AAshFarmPlayerController::BeginPlay()
 	{
 		UE_LOG(A_LogAshFarm, Error, TEXT("组件安装规则表加载成功, 共加载 %d 条规则"), InstallRuleTable->GetRowNames().Num());
 	}
+
+	TArray<FName> RowNames = InstallRuleTable->GetRowNames();
+
+	for(const FName& RowName : RowNames)
+	{
+		const FInstallRule* Rule = InstallRuleTable->FindRow<FInstallRule>(RowName, TEXT(""));
+
+		if(!Rule)
+		{
+			UE_LOG(A_LogAshFarm, Error, TEXT("组件安装规则表加载失败，请检查 %s 是否存在"), *RowName.ToString());
+			continue;
+		}
+
+		if(!Rule->ComponentClass)
+		{
+			UE_LOG(A_LogAshFarm, Error, TEXT("组件安装规则表加载失败，请检查 %s 的 ComponentClass 是否存在"), *RowName.ToString());
+			continue;
+		}
+
+		InstallRuleCache.Add(Rule->ComponentClass, *Rule);
+		UE_LOG(A_LogAshFarm, Error, TEXT("组件安装规则表加载成功， %s"), *RowName.ToString());
+	}
 }
 
 void AAshFarmPlayerController::SetupInputComponent()

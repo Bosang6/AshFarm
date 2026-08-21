@@ -5,13 +5,15 @@
 #include "CoreMinimal.h"
 //#include "Templates/SubclassOf.h"
 #include "GameFramework/PlayerController.h"
+#include "Comps/InstallRule.h"
 #include "AshFarmPlayerController.generated.h"
 
 class UNiagaraSystem;
 class UInputMappingContext;
 class UInputAction;
 class UPathFollowingComponent;
-struct FInputActionValue; // #include "InputActionValue.h"
+struct FInputActionValue;  // #include "InputActionValue.h"
+
 
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -70,8 +72,12 @@ public:
 	AAshFarmPlayerController();
 
 	// =========== 组件安装规则 =====================
-	UPROPERTY(EditAnywhere, Category = "组件功能", meta = (DisplayName = "组件安装规则表"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "组件功能", meta = (DisplayName = "组件安装规则表"))
 	TObjectPtr<UDataTable> InstallRuleTable;
+
+	// 组件安装规则缓存
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "组件功能", meta = (DisplayName = "组件安装规则缓存"))
+	TMap<TSubclassOf<UActorComponent>, FInstallRule> InstallRuleCache;
 
 	// 选中的Actor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "选择", meta = (DisplayName = "选中的Actor"))
