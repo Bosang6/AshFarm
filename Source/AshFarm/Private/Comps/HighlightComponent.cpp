@@ -44,12 +44,17 @@ void UHighlightComponent::SetHighlight(bool bHighlight)
 {
 	if(!IsValid(Owner)) return;
 
-	TObjectPtr<UStaticMeshComponent> Mesh = Owner->FindComponentByClass<UStaticMeshComponent>();
+	TArray<TObjectPtr<UStaticMeshComponent>> Meshs;
+	Owner->GetComponents<UStaticMeshComponent>(Meshs);
 
-	if(!IsValid(Mesh)) return;
+	if(Meshs.IsEmpty()) return;
 
-	// 设定自定义深度渲染
-	Mesh->SetRenderCustomDepth(bHighlight);
-	// 设定自定义深度模板值
-	Mesh->SetCustomDepthStencilValue(bHighlight ? 3 : 0);
+	for(const auto& Mesh : Meshs)
+	{
+		// 设定自定义深度渲染
+		Mesh->SetRenderCustomDepth(bHighlight);
+		// 设定自定义深度模板值
+		Mesh->SetCustomDepthStencilValue(bHighlight ? 3 : 0);
+	}
+
 }
