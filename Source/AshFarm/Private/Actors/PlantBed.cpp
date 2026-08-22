@@ -3,6 +3,7 @@
 
 #include "Actors/PlantBed.h"
 #include "Components/BoxComponent.h"
+#include "Comps/GreenHouseComponent.h"
 #include "DrawDebugHelpers.h"
 #include "AshFarm.h"
 #include "Plants/PlantBase.h"
@@ -263,10 +264,21 @@ FString APlantBed::GetSoilTypeText(ESoilType InSoilType) const
 // 更新土壤水分
 void APlantBed::SetMoistureLossPerSecond(float DeltaTime)
 {
+	float GreenHouseLossReductionRate = 1.0f;
+
+	if(TObjectPtr<UGreenHouseComponent> Comp = FindComponentByClass<UGreenHouseComponent>())
+	{
+		if(Comp->bEnabled)
+		{
+			GreenHouseLossReductionRate = Comp->MoistureLossReductionRate; 
+		}
+	}
+
 	Moisture -= 
 		PlantBedDefaults::MOISTURE_LOSS_PER_SECOND * 
 		GetMoistureLossRateBySoilQuality() * 
-		GetMoistureLossRateBySoilType() * DeltaTime;
+		GetMoistureLossRateBySoilType() * GreenHouseLossReductionRate * 
+		DeltaTime;
 	Moisture = FMath::Clamp(Moisture, 0.0f, MaxMoisture);
 }
 
