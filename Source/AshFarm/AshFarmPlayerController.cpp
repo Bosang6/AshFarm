@@ -320,3 +320,38 @@ void AAshFarmPlayerController::InstallComponentOnSelected(TSubclassOf<UActorComp
 	*/
 	SelectedActor->AddComponentByClass(ComponentClass, false, FTransform::Identity, false);
 }
+
+// 查找安装规则
+const FInstallRule* AAshFarmPlayerController::FindInstallRule(TSubclassOf<UActorComponent> CompClass) const
+{
+	if(!InstallRuleTable)
+	{
+		UE_LOG(A_LogAshFarm, Error, TEXT("请先设置安装规则表!"));
+		return nullptr; 
+	}
+
+	if(!CompClass)
+	{
+		UE_LOG(A_LogAshFarm, Error, TEXT("请先设置组件类!"));
+		return nullptr;
+	}
+
+	// 从缓存中查找
+	if(const FInstallRule* Rule = InstallRuleCache.Find(CompClass))
+	{
+		return Rule;
+	}
+
+	// 组件可能是蓝图的组件，比如继承自 UGreenHouseComponent 的子类
+	// 因此需要判断 CompClass是否属于规则内的一个子类
+	for(const auto& Pair : InstallRuleCache)
+	{
+		if(CompClass->IsChildOf(Pair.Key))
+		{
+			return &Pair.Value;
+		}
+	}
+
+	return nullptr;
+}
+	

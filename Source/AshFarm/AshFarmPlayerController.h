@@ -107,6 +107,10 @@ protected:
 
 	// 清除选中
 	void ClearSelection();
+
+private:
+	// 查找安装规则
+	const FInstallRule* FindInstallRule(TSubclassOf<UActorComponent> CompClass) const;
 	
 	
 };
