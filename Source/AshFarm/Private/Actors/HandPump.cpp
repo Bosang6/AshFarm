@@ -4,6 +4,7 @@
 #include "Actors/HandPump.h"
 #include "AshFarm.h"
 #include "Comps/CoolingComponent.h"
+#include "Comps/ProgressBarComponent.h"
 #include "Inventory/Inventory.h"
 
 // Sets default values
@@ -15,6 +16,10 @@ AHandPump::AHandPump()
 	// 创建组件
 	// CreateDefaultSubobject 只能在构造函数中使用
 	CoolingComponent = CreateDefaultSubobject<UCoolingComponent>(TEXT("冷却组件"));
+
+	CoolingProgressBarComponent = CreateDefaultSubobject<UProgressBarComponent>(TEXT("冷却进度条组件"));
+	CoolingProgressBarComponent->HeightOffset = 300.0f;
+
 }
 
 // Called when the game starts or when spawned
@@ -30,6 +35,14 @@ void AHandPump::BeginPlay()
 void AHandPump::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	// 自然冷却更新
+	float HeatPercentage = CoolingComponent->GetHeatPercentage();
+	if(CoolingComponent && CoolingComponent->IsCooling())
+	{
+		CoolingProgressBarComponent->SetProgress(HeatPercentage);
+	}
+
 }
 
 bool AHandPump::IsPumping() const
@@ -138,6 +151,9 @@ float AHandPump::PumpWater()
 
 			// 增加热量
 			CoolingComponent->AddHeat();
+
+			// 更新冷却进度条
+			CoolingProgressBarComponent->SetProgress(CoolingComponent->GetHeatPercentage());
 
 			// 耐久度损耗
 			DurabilityComponent->TakeDamage(DurabilityLossPerPump);

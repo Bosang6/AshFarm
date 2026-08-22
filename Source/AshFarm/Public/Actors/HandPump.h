@@ -11,6 +11,7 @@
 
 class AInventory;
 class UCoolingComponent;
+class UProgressBarComponent;
 
 
 namespace HandPumpDefaults
@@ -49,6 +50,12 @@ public:
 	// ======================
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "冷却系统", meta = (DisplayName = "冷却组件"))
 	TObjectPtr<UCoolingComponent> CoolingComponent;
+
+	// ======================
+	// 冷却进度条组件
+	// ======================
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "冷却系统", meta = (DisplayName = "冷却进度条组件"))
+	TObjectPtr<UProgressBarComponent> CoolingProgressBarComponent;
 
 	// ======================
 	// 水位参数

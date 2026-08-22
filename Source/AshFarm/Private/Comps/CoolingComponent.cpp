@@ -41,6 +41,7 @@ void UCoolingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	// ==== 自然散热 ======
 	if(CurrentHeat > 0.0f && bEnabledCooling)
 	{
+		bIsCooling = true;
 		CurrentHeat -= CooldownRate * DeltaTime;
 		CurrentHeat = FMath::Clamp(CurrentHeat, 0.0f, MaxHeat);
 
@@ -49,6 +50,10 @@ void UCoolingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 			bOverHeat = false;
 			UE_LOG(A_LogAshFarm, Warning, TEXT("%s 已冷却, 可以继续使用"), *Owner->GetName());
 		}
+	}
+	else
+	{
+		bIsCooling = false;
 	}
 }
 

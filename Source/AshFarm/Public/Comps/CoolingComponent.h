@@ -46,6 +46,10 @@ public:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "冷却系统", meta = (DisplayName = "是否过热"))
 	bool bOverHeat = false; 
 
+	// 是否真正冷却中
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "冷却系统", meta = (DisplayName = "是否真正冷却中"))
+	bool bIsCooling = false; 
+
 	// 自然散热速率
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "冷却系统", meta = (DisplayName = "自然散热速率", ClampMin = "1"))
 	float CooldownRate = 15.0f; 
@@ -61,6 +65,10 @@ public:
 	// 增加热量
 	UFUNCTION(BlueprintCallable, Category = "冷却系统", meta = (DisplayName = "增加热量"))
 	void AddHeat();
+
+	// 检查是否正在冷却中
+	UFUNCTION(BlueprintCallable, Category = "冷却系统", meta = (DisplayName = "检查是否正在冷却中"))
+	bool IsCooling() const { return bIsCooling; };
 
 #pragma endregion
 
