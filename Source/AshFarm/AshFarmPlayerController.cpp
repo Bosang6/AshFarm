@@ -304,8 +304,23 @@ void AAshFarmPlayerController::InstallComponentOnSelected(TSubclassOf<UActorComp
 		return;
 	}
 
+	// 检查组件是否能够安装
+	if(!CanInstallByDataTable(ComponentClass, SelectedActor))
+	{
+		UE_LOG(A_LogAshFarm, Error, TEXT("[组件安装] 该组件不能按照在该Actor上!"));
+		return;
+	}
+
+	// 检查是否可以重复安装组件
+	bool bAllowDuplicate = false;
+	const FInstallRule* Rule = FindInstallRule(ComponentClass);
+	if(Rule)
+	{
+		bAllowDuplicate = Rule->bAllowDuplicate;
+	}
+
 	UActorComponent* ExistingComponent = SelectedActor->FindComponentByClass(ComponentClass);
-	if(ExistingComponent)
+	if(ExistingComponent && !bAllowDuplicate)
 	{
 		UE_LOG(A_LogAshFarm, Error, TEXT("该Actor已经存在该组件!"));
 		return;
@@ -319,6 +334,7 @@ void AAshFarmPlayerController::InstallComponentOnSelected(TSubclassOf<UActorComp
 		4. 是否需要延迟
 	*/
 	SelectedActor->AddComponentByClass(ComponentClass, false, FTransform::Identity, false);
+	UE_LOG(A_LogAshFarm, Warning, TEXT("成功安装组件: %s"), *ComponentClass->GetName());
 }
 
 // 查找安装规则
@@ -353,5 +369,59 @@ const FInstallRule* AAshFarmPlayerController::FindInstallRule(TSubclassOf<UActor
 	}
 
 	return nullptr;
+}
+
+// 检查是否可以安装组件
+bool AAshFarmPlayerController::CanInstallByDataTable(TSubclassOf<UActorComponent> CompClass, AActor* Target) const
+{
+	if(!IsValid(Target))
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("请先选中一个Actor后才能安装组件!"));
+		return false;
+	}
+
+	if(!CompClass)
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("请先设置组件类!"));
+		return false;
+	}
+
+	if(!IsValid(InstallRuleTable))
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("请先设置安装规则表!"));
+		return false;
+	}
+
+	const FInstallRule* Rule = FindInstallRule(CompClass);
+	if(!Rule)
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("%s 未找到安装规则!"), *CompClass->GetName());
+		return false;
+	}
+
+	// 规则白名单中没有指定规则，则不限制安装
+	if(Rule->ValidOwners.IsEmpty())
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("%s 未指定有效安装规则，默认允许安装在所有Actor上"), *CompClass->GetName());
+		return true;
+	}
+
+	// 子类判断
+	for(const auto& OwnerClass : Rule->ValidOwners)
+	{
+		if(!OwnerClass)
+		{
+			continue;
+		}
+
+		if(Target->IsA(OwnerClass))
+		{
+			UE_LOG(A_LogAshFarm, Warning, TEXT("%s 可以安装在 %s 上"), *CompClass->GetName(), *OwnerClass->GetName());
+			return true;
+		}
+	}
+
+	UE_LOG(A_LogAshFarm, Warning, TEXT("%s 不能安装在 %s 上"), *CompClass->GetName(), *Target->GetName());
+	return false;
 }
 	

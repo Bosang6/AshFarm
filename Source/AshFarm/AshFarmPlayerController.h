@@ -91,6 +91,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "功能组件", meta = (DisplayName = "安装组件"))
 	void InstallComponentOnSelected(TSubclassOf<UActorComponent> ComponentClass);
 
+	UFUNCTION(BlueprintCallable, Category = "交互|组件安装")
+	bool CanInstallByDataTable(TSubclassOf<UActorComponent> CompClass, AActor* Target) const;
+
 protected:
 
 	/** Initialize input bindings */
