@@ -4,6 +4,8 @@
 #include "Comps/AutoWateringComponent.h"
 #include "Inventory/WaterTank.h"
 #include "Actors/PlantBed.h"
+#include "AshFarm.h"
+#include "EngineUtils.h" // 用于遍历World中所有的Actor => TActorIterator
 
 // Sets default values for this component's properties
 UAutoWateringComponent::UAutoWateringComponent()
@@ -34,6 +36,27 @@ void UAutoWateringComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
+
+	// 查找世界中的第一个 WaterTank
+	if(!IsValid(WaterSource))
+	{
+		for(TActorIterator<AWaterTank> It(GetWorld()); It; ++It)
+		{
+			WaterSource = *It;
+			break;
+		}
+
+		// 判断是否真正拿到水箱指针
+		if(IsValid(WaterSource))
+		{
+			UE_LOG(A_LogAshFarm, Warning, TEXT("自动浇水组件: 找到水源水箱, %s"), *WaterSource->GetName());
+		}
+
+		else
+		{
+			UE_LOG(A_LogAshFarm, Warning, TEXT("自动浇水组件: 未找到水源水箱, 请确保场景中最少有一个WaterTank"));
+		}
+	}
 	
 }
 
