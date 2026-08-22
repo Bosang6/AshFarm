@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interfaces/Interactable.h"
+#include "Comps/DurabilityComponent.h"
 #include "AshFarm.h"
 
 #include "Building.generated.h"
@@ -39,11 +40,13 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Collision")
 	TObjectPtr<UBoxComponent> CollisionBox;
 
-	// ======================
 	// 高亮组件
-	// ======================
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "高亮组件", meta = (DisplayName = "冷却组件"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "高亮组件", meta = (DisplayName = "高亮组件"))
 	TObjectPtr<UHighlightComponent> HighlightComponent;
+
+	// 耐久度组件
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "耐久度组件", meta = (DisplayName = "耐久度组件"))
+	TObjectPtr<UDurabilityComponent> DurabilityComponent;
 
 
 public:	
@@ -54,6 +57,7 @@ public:
 	virtual void OnSelected_Implementation() override;
 	virtual void OnInteract_Implementation() override;
 	virtual void OnUnselected_Implementation() override;
+	virtual bool IsInteractable_Implementation() const override;
 	// =================================
 
 };

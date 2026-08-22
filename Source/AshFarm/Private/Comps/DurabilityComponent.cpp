@@ -29,6 +29,7 @@ void UDurabilityComponent::BeginPlay()
 	}
 	Owner = GetOwner();	
 	
+	ensureAlwaysMsgf(MaxDurability > 0.0f, TEXT("MaxDurability 必须大于 0.0f"));
 }
 
 
@@ -127,4 +128,10 @@ float UDurabilityComponent::TakeDamage(float DamageAmount)
 
 	//返回实际伤害量
 	return ActualDamage;
+}
+
+// 获取可修复次数
+int32 UDurabilityComponent::GetRepairAttempts() const
+{
+	return RepairAttempts;
 }

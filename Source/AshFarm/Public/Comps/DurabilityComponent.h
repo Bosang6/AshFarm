@@ -47,6 +47,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "手压井状态", meta = (DisplayName = "是否低于耐久度危险阈值"))
 	bool IsCritical() const;
 
+	// 获取可修复次数
+	UFUNCTION(BlueprintCallable, Category = "手压井状态", meta = (DisplayName = "获取可修复次数"))
+	int32 GetRepairAttempts() const;
+
 	// 修理
 	UFUNCTION(BlueprintCallable, Category = "手压井功能", meta = (DisplayName = "修复"))
 	bool Repair();

@@ -31,6 +31,8 @@ ABuilding::ABuilding()
 	CollisionBox->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
 
 	HighlightComponent = CreateDefaultSubobject<UHighlightComponent>(TEXT("高亮组件"));
+
+	DurabilityComponent = CreateDefaultSubobject<UDurabilityComponent>(TEXT("耐久度组件"));
 }
 
 // Called when the game starts or when spawned
@@ -66,3 +68,8 @@ void ABuilding::OnInteract_Implementation()
 
 }
 
+// 是否可交互
+bool ABuilding::IsInteractable_Implementation() const
+{
+	return !DurabilityComponent->IsBroken();
+}

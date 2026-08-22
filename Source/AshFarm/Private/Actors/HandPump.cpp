@@ -15,8 +15,6 @@ AHandPump::AHandPump()
 	// 创建组件
 	// CreateDefaultSubobject 只能在构造函数中使用
 	CoolingComponent = CreateDefaultSubobject<UCoolingComponent>(TEXT("冷却组件"));
-	
-
 }
 
 // Called when the game starts or when spawned
@@ -25,7 +23,6 @@ void AHandPump::BeginPlay()
 	Super::BeginPlay();
 	
 	ensureAlwaysMsgf(MaxWater > 0.0f, TEXT("MaxWater 必须大于 0.0f"));
-	ensureAlwaysMsgf(MaxDurability > 0.0f, TEXT("MaxDurability 必须大于 0.0f"));
 	ensureAlwaysMsgf(Mesh != nullptr, TEXT("Mesh 不能为空"));
 }
 
@@ -33,14 +30,6 @@ void AHandPump::BeginPlay()
 void AHandPump::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	
-
-}
-
-bool AHandPump::IsBroken() const
-{
-	return bIsBroken;
 }
 
 bool AHandPump::IsPumping() const
@@ -59,7 +48,7 @@ float AHandPump::TakeWater(float WaterAmount)
 		return 0.0f;
 	}
 	//2. 设备坏了 bIsBroken == true
-	if(bIsBroken == true)
+	if(DurabilityComponent->IsBroken())
 	{
 		UE_LOG(A_LogAshFarm, Warning, TEXT("手压井: %s 已损坏"), *DeviceID.ToString());
 		return 0.0f;
@@ -100,11 +89,11 @@ float AHandPump::PumpWater()
 	}
 
 	// 中等3
-	if(!bIsBroken && CurrentWater < MaxWater)
+	if(!DurabilityComponent->IsBroken() && CurrentWater < MaxWater)
 	{
 		DryPumpCount = 0;
 
-		if(!bIsBroken && CurrentWater < MaxWater && !bIsPumping)
+		if(!DurabilityComponent->IsBroken() && CurrentWater < MaxWater && !bIsPumping)
 		{
 			// float LastWater = CurrentWater; 
 			// CurrentWater = FMath::Clamp(CurrentWater + AddWaterPerTime, 0.0f, MaxWater);
@@ -139,18 +128,7 @@ float AHandPump::PumpWater()
 			CoolingComponent->AddHeat();
 
 			// 耐久度损耗
-			Durability = FMath::Clamp(Durability - DurabilityLossPerPump, 0.0f, MaxDurability);
-			// 检查手压井是否低于危险阈值
-			if(Durability <= DurabilityCriticalThreshold)
-			{
-				UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 耐久度: %f 低于危险阈值: %f"), *DeviceID.ToString(), Durability, DurabilityCriticalThreshold);
-			}
-
-			if(Durability <= 0)
-			{
-				bIsBroken = true;
-				UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 已损坏"), *DeviceID.ToString());
-			}
+			DurabilityComponent->TakeDamage(DurabilityLossPerPump);
 
 			// 记录泵水次数
 			PumpCount++;
@@ -176,7 +154,7 @@ float AHandPump::PumpWater()
 
 		FString Reason = TEXT("");
 
-		if(bIsBroken)
+		if(DurabilityComponent->IsBroken())
 		{
 			Reason = TEXT("手压井已损坏, 需要修复");
 		}
@@ -206,32 +184,10 @@ float AHandPump::GetWaterPercentage() const
 	return CurrentWater / MaxWater;
 }
 
-//获取当前耐久度占比
-float AHandPump::GetDurabilityPercentage() const
-{
-	ensure(MaxDurability > 0.0f);
-
-	if(MaxDurability == 0.0f)
-	{
-		return 0.0f;
-	}
-
-	return Durability / MaxDurability;
-}
-
 bool AHandPump::Repair()
 {
-	// 检查是否损坏
-	if(!bIsBroken)
+	if(!DurabilityComponent->Repair())
 	{
-		UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 未损坏, 无需修复"), *DeviceID.ToString());
-		return false;
-	}
-
-	// 检查修复次数
-	if(RepairAttempts <= 0)
-	{
-		UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 无修复次数"), *DeviceID.ToString());
 		return false;
 	}
 
@@ -242,8 +198,6 @@ bool AHandPump::Repair()
 		return false;
 	}
 
-	RepairAttempts--;
-
 	// 中等2
 
 	CurrentWater -= HandPumpDefaults::MIN_WATER_FOR_REPAIR;
@@ -251,14 +205,7 @@ bool AHandPump::Repair()
 
 	DryPumpCount = 0;
 
-	// TODO: 需要耗材修复
-
-	// 恢复耐久度
-	Durability = MaxDurability * HandPumpDefaults::REPAIR_RESTORE_PERCENT;
-
-	bIsBroken = false;
-
-	UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 已修复, 修复剩余次数: %d, 耐久度恢复到: %f"), *DeviceID.ToString(), RepairAttempts, Durability);
+	UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 已修复"), *DeviceID.ToString());
 	
 	return true;
 }
@@ -269,7 +216,7 @@ FString AHandPump::Maintain()
 	bool bDidSomething = false; //是否有没有干活
 
 	// 1.检查手压井是否损坏，并尝试修复
-	if(bIsBroken)
+	if(DurabilityComponent->IsBroken())
 	{
 		// TODO: Repair只返回是否修复成功, 没有返回失败原因, 待优化
 		if(Repair())
@@ -285,7 +232,7 @@ FString AHandPump::Maintain()
 	}
 
 	// 2.检查耐久度
-	if(Durability <= DurabilityCriticalThreshold)
+	if(DurabilityComponent->IsCritical())
 	{
 		Report += FString::Printf(TEXT("手压井耐久度低于危险阈值, 再压几下就要散架了"));
 		bDidSomething = true;
@@ -314,8 +261,8 @@ void AHandPump::PrintState()
 
 	PrintString += FString::Printf(
 		TEXT("\n当前耐久度: %f, 当前修复次数: %d, 当前泵水次数: %d"),
-		GetDurabilityPercentage(),
-		RepairAttempts,
+		DurabilityComponent->GetDurabilityPercentage(),
+		DurabilityComponent->GetRepairAttempts(),
 		PumpCount
 	);
 
@@ -352,8 +299,7 @@ void AHandPump::OnInteract_Implementation()
 
 bool AHandPump::IsInteractable_Implementation() const
 {
-	Super::IsInteractable_Implementation();
-	return Durability > 0.0f && !CoolingComponent->bOverHeat;
+	return Super::IsInteractable_Implementation() && !CoolingComponent->bOverHeat;
 }
 
 // 取消选中时

@@ -28,8 +28,6 @@ namespace HandPumpDefaults
 	static constexpr float DEFAULT_MAX_DURABILITY 				 = 100.0f;
 	static constexpr float DEFAULT_DURABILITY_LOSS_PER_PUMP 	 = 2.0f;
 	static constexpr float DEFAULT_DURABILITY_CRITICAL_THRESHOLD = 10.0f;
-	
-	
 }
 
 UCLASS()
@@ -46,7 +44,7 @@ public:
 	TObjectPtr<AInventory> Inventory = nullptr;
 
 	// ======================
-	// 冷却系统
+	// 冷却系统组件
 	// ======================
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "冷却系统", meta = (DisplayName = "冷却组件"))
 	TObjectPtr<UCoolingComponent> CoolingComponent;
@@ -87,26 +85,10 @@ public:
 	// 当耐久度低于阈值时，手压井更容易损坏
 	// 当耐久度<=0时，手压井损坏
 
-	// 耐久度
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "手压井状态", meta = (DisplayName = "耐久度"))
-	float Durability = HandPumpDefaults::DEFAULT_DURABILITY;
-	// 最大耐久度
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "手压井状态", meta = (DisplayName = "最大耐久度", ClampMin = "50.0", ClampMax = "200.0"))
-	float MaxDurability = HandPumpDefaults::DEFAULT_MAX_DURABILITY;
 	// 泵水损耗
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "手压井状态", meta = (DisplayName = "泵水损耗", ClampMin = "0.5", ClampMax = "10.0"))
 	float DurabilityLossPerPump = HandPumpDefaults::DEFAULT_DURABILITY_LOSS_PER_PUMP;
-	// 耐久度危险阈值
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "手压井状态", meta = (DisplayName = "耐久度危险阈值"))
-	float DurabilityCriticalThreshold = HandPumpDefaults::DEFAULT_DURABILITY_CRITICAL_THRESHOLD;
 	// -----------------
-
-	// 手压井是否损坏
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "手压井状态", meta = (DisplayName = "是否损坏"))
-	bool bIsBroken = false; // true: 坏
-
-	UFUNCTION(BlueprintCallable, Category = "手压井状态", meta = (DisplayName = "手压井是否损坏"))
-	bool IsBroken() const;
 
 	// 手压井是否正在泵水
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "手压井状态", meta = (DisplayName = "是否正在泵水"))
@@ -176,9 +158,6 @@ public:
 	//获取当前水位占比
 	UFUNCTION(BlueprintCallable, Category = "手压井状态", meta = (DisplayName = "获取当前水位占比"))
 	float GetWaterPercentage() const;
-	//获取当前耐久度占比
-	UFUNCTION(BlueprintCallable, Category = "手压井状态", meta = (DisplayName = "获取当前耐久度占比"))
-	float GetDurabilityPercentage() const;
 
 	// 打印状态
 	UFUNCTION(BlueprintCallable, Category = "手压井状态", meta = (DisplayName = "打印状态"))
