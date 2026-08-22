@@ -36,6 +36,11 @@ void UProgressBarComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	DrawProgressBar();
+
+	if(CurrentProgress >= 1.0f)
+	{
+		DrawFlashingDot();
+	}
 }
 
 // 设置进度
@@ -81,4 +86,23 @@ FColor UProgressBarComponent::GetCurrentColor()
 	{
 		return NormalColor;
 	}
+}
+
+// 绘制闪烁点
+void UProgressBarComponent::DrawFlashingDot()
+{
+	if(!IsValid(Owner)) return;
+
+	bool bFlash = FMath::Fmod(Owner->GetWorld()->GetTimeSeconds(), 1.0f) < 0.5f;
+
+	if(!bFlash) return;
+
+	DrawDebugPoint(
+		Owner->GetWorld(),
+		Owner->GetActorLocation() + FVector(0.0f, 0.0f, HeightOffset + 30.0f),
+		5.0f,			// 点的大小
+		FColor::Red,
+		false,
+		0.1f
+	);
 }
