@@ -105,12 +105,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "手压井状态", meta = (DisplayName = "是否损坏"))
 	bool bIsBroken = false; // true: 坏
 
+	UFUNCTION(BlueprintCallable, Category = "手压井状态", meta = (DisplayName = "手压井是否损坏"))
+	bool IsBroken() const;
+
 	// 手压井是否正在泵水
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "手压井状态", meta = (DisplayName = "是否正在泵水"))
 	bool bIsPumping = false; // true: 正在泵水
-
-	UFUNCTION(BlueprintCallable, Category = "手压井状态", meta = (DisplayName = "手压井是否损坏"))
-	bool IsBroken() const;
 
 	UFUNCTION(BlueprintCallable, Category = "手压井状态", meta = (DisplayName = "手压井是否正在泵水"))
 	bool IsPumping() const;
