@@ -76,14 +76,17 @@ bool UDurabilityComponent::Repair()
 		return false;
 	}
 
-	// 检查修复次数
-	if(RepairAttempts <= 0)
+	if(!bCanUnlimitRepair)
 	{
-		UE_LOG(A_LogAshFarm, Warning, TEXT("%s: 无修复次数"), *Owner->GetName());
-		return false;
-	}
+		// 检查修复次数
+		if(RepairAttempts <= 0)
+		{
+			UE_LOG(A_LogAshFarm, Warning, TEXT("%s: 无修复次数"), *Owner->GetName());
+			return false;
+		}
 
-	RepairAttempts--;
+		RepairAttempts--;
+	}
 
 	// TODO: 需要耗材修复
 
