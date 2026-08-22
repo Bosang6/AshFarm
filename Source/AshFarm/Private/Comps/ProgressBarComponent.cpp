@@ -41,12 +41,14 @@ void UProgressBarComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 // 设置进度
 void UProgressBarComponent::SetProgress(float Value)
 {
-	CurrentProgress = FMath::Clamp(CurrentProgress, 0.0f, 1.0f);
+	CurrentProgress = FMath::Clamp(Value, 0.0f, 1.0f);
 }
 
 // 绘制进度条
 void UProgressBarComponent::DrawProgressBar()
 {
+	if(!IsValid(Owner)) return;
+
 	FVector BarLocation = Owner->GetActorLocation() + FVector(0.0f, 0.0f, HeightOffset);
 
 	FString InText = FString::Printf(TEXT("%.0f%%"), CurrentProgress * 100.0f);

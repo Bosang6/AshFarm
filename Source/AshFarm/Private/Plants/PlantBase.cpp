@@ -211,7 +211,7 @@ void UPlantBase::SetGrowthStage()
         return;
     }
 
-    float GrowthProgressRatio = GrowthProgress / PlantConfig.MatureProgress;
+    float GrowthProgressRatio = GetGrowthProgressPercentage();
 
     if(GrowthProgressRatio < PlantDefaults::GROWTH_PROGRESS_THRESHOLD)
     {
@@ -233,6 +233,12 @@ void UPlantBase::SetGrowthStage()
         GrowthStage = EGrowthStage::Mature;
         return;
     }
+}
+
+// 获取生长进度百分比
+float UPlantBase::GetGrowthProgressPercentage() const
+{
+    return GrowthProgress / PlantConfig.MatureProgress;
 }
 
 // 当成熟时调用

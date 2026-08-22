@@ -13,6 +13,7 @@ class UBoxComponent;
 class USceneComponent;
 class UStaticMeshComponent;
 class UPlantBase;
+class UProgressBarComponent;
 
 #define GROWTH_SPEED_SALINE   0.0f
 #define GROWTH_SPEED_POOR     0.5f
@@ -26,6 +27,10 @@ class ASHFARM_API APlantBed : public ABuilding
 	
 public:	
 	APlantBed();
+
+	// 进度条组件
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "进度条组件", meta = (DisplayName = "进度条组件"))
+	TObjectPtr<UProgressBarComponent> ProgressBarComponent;
 
 	// 目前种植的作物类型
 	UPROPERTY(EditAnywhere, Instanced, BlueprintReadWrite, Category = "种植", meta = (DisplayName = "当前作物类型"))

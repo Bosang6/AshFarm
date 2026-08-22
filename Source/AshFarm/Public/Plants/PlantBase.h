@@ -125,6 +125,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "植物", meta = (DisplayName = "获取当前生长阶段"))
 	virtual EGrowthStage GetGrowthStage() const { return GrowthStage; };
 
+	// 获取生长进度百分比
+	UFUNCTION(BlueprintCallable, Category = "植物", meta = (DisplayName = "获取生长进度百分比"))
+	virtual float GetGrowthProgressPercentage() const;
+
 	// 获取当前生长阶段文字
 	UFUNCTION(BlueprintCallable, Category = "植物", meta = (DisplayName = "获取当前生长阶段文字"))
 	virtual FString GetGrowthStageText(EGrowthStage InGrowthStage) const;

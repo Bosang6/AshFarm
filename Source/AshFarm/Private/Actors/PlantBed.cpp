@@ -4,6 +4,7 @@
 #include "Actors/PlantBed.h"
 #include "Components/BoxComponent.h"
 #include "Comps/GreenHouseComponent.h"
+#include "Comps/ProgressBarComponent.h"
 #include "DrawDebugHelpers.h"
 #include "AshFarm.h"
 #include "Plants/PlantBase.h"
@@ -28,6 +29,7 @@ APlantBed::APlantBed()
 	PlantMesh->AttachToComponent(PlantingPoint, FAttachmentTransformRules::KeepRelativeTransform);
 	PlantMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	ProgressBarComponent = CreateDefaultSubobject<UProgressBarComponent>(TEXT("进度条组件"));
 }
 
 void APlantBed::OnConstruction(const FTransform& Transform)
@@ -87,8 +89,14 @@ void APlantBed::Tick(float DeltaTime)
 		Context.RadiationLevel = RadiationLevel;
 		Context.Toxicity = Toxicity;
 
-
+		// 植物生长
 		CurrentPlant->Grow(DeltaTime, Context);
+
+		// 更新进度条组件
+		if(IsValid(ProgressBarComponent))
+		{
+			ProgressBarComponent->SetProgress(CurrentPlant->GetGrowthProgressPercentage());
+		}
 
 		// 土壤水分消耗
 		if(Moisture >= 0.0f)
