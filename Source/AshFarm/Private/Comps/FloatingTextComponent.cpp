@@ -56,7 +56,7 @@ void UFloatingTextComponent::ShowText(const FString& InText, FColor InColor, flo
 		Owner->GetWorld(),
 		TextLocation,
 		InText,
-		Owner,
+		nullptr,
 		InColor,
 		InDuration,
 		true,

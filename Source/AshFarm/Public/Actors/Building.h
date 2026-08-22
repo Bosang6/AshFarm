@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Interfaces/Interactable.h"
 #include "Comps/DurabilityComponent.h"
+#include "Comps/FloatingTextComponent.h"
 #include "AshFarm.h"
 
 #include "Building.generated.h"
@@ -47,6 +48,10 @@ protected:
 	// 耐久度组件
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "耐久度组件", meta = (DisplayName = "耐久度组件"))
 	TObjectPtr<UDurabilityComponent> DurabilityComponent;
+
+	// 漂浮文本组件
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "漂浮文本组件", meta = (DisplayName = "冷却组件"))
+	TObjectPtr<UFloatingTextComponent> FloatingTextComponent;
 
 
 public:	

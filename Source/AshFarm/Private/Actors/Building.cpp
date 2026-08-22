@@ -4,6 +4,7 @@
 #include "Actors/Building.h"
 #include "Components/BoxComponent.h"
 #include "Comps/HighlightComponent.h"
+
 #include "AshFarm.h"
 
 // Sets default values
@@ -33,6 +34,8 @@ ABuilding::ABuilding()
 	HighlightComponent = CreateDefaultSubobject<UHighlightComponent>(TEXT("高亮组件"));
 
 	DurabilityComponent = CreateDefaultSubobject<UDurabilityComponent>(TEXT("耐久度组件"));
+
+	FloatingTextComponent = CreateDefaultSubobject<UFloatingTextComponent>(TEXT("漂浮文本组件"));
 }
 
 // Called when the game starts or when spawned

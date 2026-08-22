@@ -124,6 +124,18 @@ float AHandPump::PumpWater()
 			// 往 Inventory 仓库水箱内装水
 			int32 AddWater = Inventory->AddResource(EResourcesType::Water, AddWaterPerTime);
 
+			// 显示添加血量
+			if(IsValid(FloatingTextComponent))
+			{
+				FloatingTextComponent->ShowTextDefault(FString::Printf(TEXT("+ %d 水"), AddWater));
+			
+				// 水仓也显示“+2水”文本
+				if(TObjectPtr<UFloatingTextComponent> FTComponent = Inventory->FindComponentByClass<UFloatingTextComponent>())
+				{
+					FTComponent->ShowTextDefault(FString::Printf(TEXT("+ %d 水"), AddWater));
+				}
+			}
+
 			// 增加热量
 			CoolingComponent->AddHeat();
 
