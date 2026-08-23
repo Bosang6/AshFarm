@@ -171,6 +171,11 @@ void UFeedbackComponent::SpawnEffect(FName EventName, FVector Location, FRotator
 		true, 						// 是否自动激活
 		ENCPoolMethod::AutoRelease  // 使用对象池
 	);
+
+	if(SpawnedComp)
+	{
+		ActiveEffectMap.FindOrAdd(EventName).Add(SpawnedComp);
+	}
 }
 
 // 在指定位置处播放特效 (附着在指定组件上)
@@ -213,10 +218,24 @@ void UFeedbackComponent::SpawnEffectAttached(FName EventName, USceneComponent* A
 		true, 						// 是否自动激活
 		ENCPoolMethod::AutoRelease  // 使用对象池
 	);
+
+	if(SpawnedComp)
+	{
+		ActiveEffectMap.FindOrAdd(EventName).Add(SpawnedComp);
+	}
 }
 
 // 停止播放特效
 void UFeedbackComponent::StopEffect(FName EventName)
 {
+	TArray<TObjectPtr<UNiagaraComponent>> ActiveEffects = ActiveEffectMap.FindRef(EventName);
 
+	if(ActiveEffects.IsEmpty()) return;
+
+	for(UNiagaraComponent* Effect : ActiveEffects)
+	{
+		Effect->Deactivate();
+	}
+
+	ActiveEffects.Empty();
 }

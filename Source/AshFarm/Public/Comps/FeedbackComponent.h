@@ -114,4 +114,7 @@ private:
 
 	// 已加载的音效映射表
 	TMap<FName, TObjectPtr<USoundBase>> LoadedSoundMap;
+
+	// 缓存已激活的特效
+	TMap<FName, TArray<TObjectPtr<UNiagaraComponent>>> ActiveEffectMap;
 };
