@@ -19,6 +19,18 @@ USoundBase* UFeedbackDataAsset::GetSound(FName EventName) const
 	return SoundPtr.LoadSynchronous(); // 软对象指针 并不是一个真正的指针，是一个对象。 这里需要用 . 进行函数调用
 }
 
+// 获取特效
+UNiagaraSystem* UFeedbackDataAsset::GetEffect(FName EventName) const
+{
+	const TSoftObjectPtr<UNiagaraSystem> EffectPtr = EffectMap.FindRef(EventName);
+	if(!EffectPtr.IsValid())
+	{
+		return nullptr;
+	}
+
+	return EffectPtr.LoadSynchronous();
+}
+
 #pragma endregion
 
 

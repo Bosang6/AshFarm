@@ -5,26 +5,38 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "Components/ActorComponent.h"
+#include "NiagaraSystem.h"
 #include "FeedbackComponent.generated.h"
 
-#pragma region 音效配置数据资产
+#pragma region 反馈配置数据资产
 
-UCLASS(BlueprintType, meta = (DisplayName = "音效配置数据资产"))
+UCLASS(BlueprintType, meta = (DisplayName = "反馈配置数据资产"))
 class ASHFARM_API UFeedbackDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "音效配置", meta = (DisplayName = "音效映射表"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "反馈配置", meta = (DisplayName = "音效映射表"))
 	TMap<FName, TSoftObjectPtr<USoundBase>> SoundMap;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "反馈配置", meta = (DisplayName = "特效映射表"))
+	TMap<FName, TSoftObjectPtr<UNiagaraSystem>> EffectMap;
+
 	// 获取音效 (加载资源) 【UFUNCTION 下 不能返回 TObjectPtr】
-	UFUNCTION(BlueprintCallable, Category = "音效配置")
+	UFUNCTION(BlueprintCallable, Category = "反馈配置")
 	USoundBase* GetSound(FName EventName) const;
 
+	// 获取特效
+	UFUNCTION(BlueprintCallable, Category = "反馈配置")
+	UNiagaraSystem* GetEffect(FName EventName) const;
+
 	// 检查音效是否存在
-	UFUNCTION(BlueprintCallable, Category = "音效配置")
+	UFUNCTION(BlueprintCallable, Category = "反馈配置")
 	bool HasSound(FName EventName) const { return SoundMap.Contains(EventName); };
+
+	// 检查特效是否存在
+	UFUNCTION(BlueprintCallable, Category = "反馈配置")
+	bool HasEffect(FName EventName) const { return EffectMap.Contains(EventName); };
 };
 
 
