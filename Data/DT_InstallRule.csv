@@ -1,2 +1,5 @@
 ---,ComponentClass,ValidOwners,bAllowDuplicate
 GreenHouseComponent,"/Script/CoreUObject.Class'/Script/AshFarm.GreenHouseComponent'","(""/Script/CoreUObject.Class'/Script/AshFarm.PlantBed'"")","False"
+AutoWateringComponent,"/Script/CoreUObject.Class'/Script/AshFarm.AutoWateringComponent'","(""/Script/CoreUObject.Class'/Script/AshFarm.PlantBed'"")","False"
+AutoFertilityComponent,"/Script/CoreUObject.Class'/Script/AshFarm.AutoFertilityComponent'","(""/Script/CoreUObject.Class'/Script/AshFarm.PlantBed'"")","False"
+SoilSensorComponent,"/Script/CoreUObject.Class'/Script/AshFarm.SoilSensorComponent'","(""/Script/CoreUObject.Class'/Script/AshFarm.PlantBed'"")","False"

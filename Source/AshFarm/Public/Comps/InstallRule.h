@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 
 #include "Components/SceneComponent.h"
+#include "Inventory/InventoryTypes.h"
 
 #include "InstallRule.generated.h"
 
@@ -19,4 +20,10 @@ struct FInstallRule : public FTableRowBase
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "功能组件", meta = (DisplayName = "是否允许重复安装"))
     bool bAllowDuplicate;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "功能组件", meta = (DisplayName = "安装消耗"))
+    TMap<EResourcesType, int32> InstallCost;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "功能组件", meta = (DisplayName = "不兼容组件列表"))
+    TSet<TSubclassOf<UActorComponent>> IncompatibleWith;
 };
