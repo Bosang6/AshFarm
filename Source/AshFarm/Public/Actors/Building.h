@@ -7,6 +7,7 @@
 #include "Interfaces/Interactable.h"
 #include "Comps/DurabilityComponent.h"
 #include "Comps/FloatingTextComponent.h"
+#include "Comps/AudioFeedbackComponent.h"
 #include "AshFarm.h"
 
 #include "Building.generated.h"
@@ -52,6 +53,10 @@ protected:
 	// 漂浮文本组件
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "漂浮文本组件", meta = (DisplayName = "冷却组件"))
 	TObjectPtr<UFloatingTextComponent> FloatingTextComponent;
+
+	// 音效反馈组件
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "音效反馈组件", meta = (DisplayName = "音效反馈组件"))
+	TObjectPtr<UAudioFeedbackComponent> AudioFeedbackComponent;
 
 
 public:	

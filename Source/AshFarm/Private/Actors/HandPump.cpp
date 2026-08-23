@@ -101,6 +101,26 @@ float AHandPump::PumpWater()
 		return 0.0f;
 	}
 
+	if(!IsValid(CoolingProgressBarComponent))
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 没有冷却进度组件"), *DeviceID.ToString());
+		return 0.0f;
+	}
+
+	if(!IsValid(DurabilityComponent))
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 没有耐久度组件"), *DeviceID.ToString());
+		return 0.0f;
+	}
+
+	if(!IsValid(AudioFeedbackComponent))
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 没有音效反馈组件"), *DeviceID.ToString());
+		return 0.0f;
+	}
+
+
+
 	// 中等3
 	if(!DurabilityComponent->IsBroken() && CurrentWater < MaxWater)
 	{
@@ -157,6 +177,9 @@ float AHandPump::PumpWater()
 
 			// 耐久度损耗
 			DurabilityComponent->TakeDamage(DurabilityLossPerPump);
+
+			// 播放音效
+			AudioFeedbackComponent->PlaySound(FName(TEXT("手压井压水")));
 
 			// 记录泵水次数
 			PumpCount++;

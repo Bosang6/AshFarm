@@ -36,6 +36,8 @@ ABuilding::ABuilding()
 	DurabilityComponent = CreateDefaultSubobject<UDurabilityComponent>(TEXT("耐久度组件"));
 
 	FloatingTextComponent = CreateDefaultSubobject<UFloatingTextComponent>(TEXT("漂浮文本组件"));
+
+	AudioFeedbackComponent = CreateDefaultSubobject<UAudioFeedbackComponent>(TEXT("音效反馈组件"));
 }
 
 // Called when the game starts or when spawned
