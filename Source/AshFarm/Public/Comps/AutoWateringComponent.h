@@ -31,7 +31,7 @@ public:
 
 	// 每次浇水量
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "状态", meta = (DisplayName = "每次浇水量"))
-	float WaterAmountPerTick = 10.0f;
+	float WaterAmountPerTick = 0.5f;
 
 	// 水源水箱
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "状态", meta = (DisplayName = "水源水箱"))

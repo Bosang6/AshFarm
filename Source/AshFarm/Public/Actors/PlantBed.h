@@ -93,6 +93,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "设置土壤肥力"))
 	void SetSoliFertility(float Fertility);
 
+	// 获取土壤湿度
+	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "获取土壤湿度"))
+	float GetSoliMoisture() const;
+
 	// 浇水
 	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "浇水"))
 	void ReceiveMoisture(float InMoisture);

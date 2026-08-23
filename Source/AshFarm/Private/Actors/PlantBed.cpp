@@ -136,6 +136,12 @@ void APlantBed::SetSoliFertility(float Fertility)
 	SoilFertility = Fertility;
 }
 
+// 获取土壤湿度
+float APlantBed::GetSoliMoisture() const
+{
+	return Moisture;
+}
+
 // 浇水
 void APlantBed::ReceiveMoisture(float InMoisture)
 {
@@ -435,24 +441,26 @@ void APlantBed::Harvest()
 // 打印状态
 void APlantBed::PrintState()
 {
-	FString PrintString = FString::Printf(TEXT("种植床ID: %d \n\n	\
-				土壤类型: %s, 土壤肥力: %f, 土壤品质: %s, 土壤湿度: %f \n\n	\
-				目前作物: %s, 生长进度: %s (%f %s) - %s, 逆境值: %2f, 品质: %s \n\n \
-				预计产量: %f \n\n"), 
-			BedID,
-			*GetSoilTypeText(SoilType), 
+	if(!IsValid(CurrentPlant))
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("种植床: %d 没有种植植物"), BedID);
+		return;
+	}
+
+	FString PrintString = FString::Printf(TEXT("种植床ID: %d \n\n"), BedID);
+	PrintString += FString::Printf(TEXT("土壤类型: %s, 土壤肥力: %f, 土壤品质: %s, 土壤湿度: %f \n\n"), *GetSoilTypeText(SoilType), 
 			SoilFertility, 
 			*GetSoilQualityText(SoilQuality), 
-			Moisture,
-			*CurrentPlant->GetPlantName(),
+			Moisture);
+
+	PrintString += FString::Printf(TEXT("目前作物: %s, 生长进度: %s (%f %s) - %s, 逆境值: %2f, 品质: %s \n\n"), *CurrentPlant->GetPlantName(),
 			*CurrentPlant->GetGrowthStageText(CurrentPlant->GetGrowthStage()),
 			CurrentPlant->GrowthProgress,
 			*CurrentPlant->GetGrowthTimeText(),
 			CurrentPlant->IsDead() ? TEXT("已死亡") : TEXT("正常"),
 			CurrentPlant->Stress,
-			*CurrentPlant->GetQualityText(CurrentPlant->CurrentQuality),
-			CurrentPlant->CalculateHarvest()
-		);
+			*CurrentPlant->GetQualityText(CurrentPlant->CurrentQuality));
+	PrintString += FString::Printf(TEXT("预计产量: %f \n\n"), CurrentPlant->CalculateHarvest());
 
 	PrintString += FString::Printf(TEXT("相邻种植床数量: %d "), NeighborBeds.Num());
 
@@ -462,7 +470,7 @@ void APlantBed::PrintState()
 	}
 
 	FVector TextLocation = GetActorLocation() + FVector(0.0f, 0.0f, 100.0f); // 土壤肥力文本位置
-		
+
 	//DEBUG 打印信息
 	DrawDebugString(
 		GetWorld(), 
