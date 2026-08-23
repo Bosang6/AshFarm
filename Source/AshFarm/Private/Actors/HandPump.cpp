@@ -159,6 +159,8 @@ float AHandPump::PumpWater()
 
 			// 播放音效
 			FeedbackComponent->PlaySound(FName(TEXT("手压井压水")));
+			// 播放特效
+			FeedbackComponent->SpawnEffect(FName(TEXT("手压井压水")), GetActorLocation(), GetActorRotation());
 
 			// 记录泵水次数
 			PumpCount++;

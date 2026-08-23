@@ -11,7 +11,7 @@ USoundBase* UFeedbackDataAsset::GetSound(FName EventName) const
 {
 	// SoundMap.Find(EventName) 返回的是一个指向 TSoftObjectPtr<USoundBase> 的指针 【指向指针的指针】
 	const TSoftObjectPtr<USoundBase> SoundPtr = SoundMap.FindRef(EventName);
-	if(!SoundPtr.IsValid())  // 软对象指针的判合法方式与对象不同 【IsValid(SoundPtr)】
+	if(SoundPtr.IsNull())  // 软对象指针的判合法方式与对象不同 【IsValid(SoundPtr)】
 	{
 		return nullptr;
 	}
@@ -23,7 +23,7 @@ USoundBase* UFeedbackDataAsset::GetSound(FName EventName) const
 UNiagaraSystem* UFeedbackDataAsset::GetEffect(FName EventName) const
 {
 	const TSoftObjectPtr<UNiagaraSystem> EffectPtr = EffectMap.FindRef(EventName);
-	if(!EffectPtr.IsValid())
+	if(EffectPtr.IsNull()) // IsValid() 用来判断资源是否加载成功 IsNull() 用来判断资源是否存在
 	{
 		return nullptr;
 	}
