@@ -119,10 +119,8 @@ float AHandPump::PumpWater()
 		return 0.0f;
 	}
 
-
-
 	// 中等3
-	if(!DurabilityComponent->IsBroken() && CurrentWater < MaxWater)
+	if(CanUse() && CurrentWater < MaxWater)
 	{
 		DryPumpCount = 0;
 
@@ -130,25 +128,6 @@ float AHandPump::PumpWater()
 		{
 			// float LastWater = CurrentWater; 
 			// CurrentWater = FMath::Clamp(CurrentWater + AddWaterPerTime, 0.0f, MaxWater);
-
-			if(CoolingComponent->bOverHeat)
-			{
-				UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 已过热, 无法继续泵水"), *DeviceID.ToString());
-				return 0.0f;
-			}
-
-			// 检查手压井是否有仓库
-			/*
-				IsValid:
-					1. 判断指针是否为空
-					2. 判断对象是否被GC标记
-					3. 判断对象是否被损坏
-			*/
-			if(!IsValid(Inventory))
-			{
-				UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 所属仓库为空"), *DeviceID.ToString());
-				return 0.0f;
-			}
 
 			bIsPumping = true;
 			// 手压井在使用时禁用自然散热
@@ -330,6 +309,46 @@ void AHandPump::PrintState()
 	); 
 }
 
+// 检查手压井是否可以泵水
+bool AHandPump::CanUse() const
+{
+	if(DurabilityComponent && DurabilityComponent->IsBroken())
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 已损坏, 无法使用!!!!"), *DeviceID.ToString());
+		return false;
+	}
+
+	if(StateTagComponent)
+	{
+		if(StateTagComponent->HasTag(FName("Frozen")))
+		{
+			UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 被冻结, 无法使用"), *DeviceID.ToString());
+			return false;
+		}
+	}
+
+	if(CoolingComponent && CoolingComponent->bOverHeat)
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 已过热, 无法继续泵水"), *DeviceID.ToString());
+		return false;
+	}
+
+	// 检查手压井是否有仓库
+	/*
+		IsValid:
+			1. 判断指针是否为空
+			2. 判断对象是否被GC标记
+			3. 判断对象是否被损坏
+	*/
+	if(!IsValid(Inventory))
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 所属仓库为空"), *DeviceID.ToString());
+		return false;
+	}
+
+	return true;
+}
+
 // ============== 
 // 接口实现 
 // ==============
@@ -358,4 +377,3 @@ void AHandPump::OnUnselected_Implementation()
 {
 	Super::OnUnselected_Implementation();
 }
-

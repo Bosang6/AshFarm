@@ -52,6 +52,14 @@ void USoilSensorComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 	if(IsSoilHealthy()) return;
 
+	if(TObjectPtr<UStateTagComponent> StateComp = Owner->FindComponentByClass<UStateTagComponent>())
+	{
+		if(StateComp->HasTag(FName(TEXT("IgnoreAlarm"))))
+		{
+			return;
+		}
+	}
+
 	DrawDebugString(
 		Owner->GetWorld(),
 		Owner->GetActorLocation(),

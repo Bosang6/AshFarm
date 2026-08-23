@@ -145,6 +145,10 @@ public:
 	UFUNCTION(CallInEditor, Category = "手压井功能", meta = (DisplayName = "测试修复"))
 	void TestRepair(){ Repair(); }
 
+	// 检查手压井是否可以泵水
+	UFUNCTION(BlueprintCallable, Category = "手压井功能", meta = (DisplayName = "检查手压井是否可以泵水"))
+	bool CanUse() const;
+
 	// ========== 接口实现 ==============
 	virtual void OnSelected_Implementation() override;
 	virtual void OnInteract_Implementation() override;

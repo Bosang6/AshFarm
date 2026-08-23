@@ -8,6 +8,7 @@
 #include "Comps/DurabilityComponent.h"
 #include "Comps/FloatingTextComponent.h"
 #include "Comps/AudioFeedbackComponent.h"
+#include "Comps/StateTagComponent.h"
 #include "AshFarm.h"
 
 #include "Building.generated.h"
@@ -57,6 +58,10 @@ protected:
 	// 音效反馈组件
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "音效反馈组件", meta = (DisplayName = "音效反馈组件"))
 	TObjectPtr<UAudioFeedbackComponent> AudioFeedbackComponent;
+
+	// 状态标签组件
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "状态标签组件", meta = (DisplayName = "状态标签组件"))
+	TObjectPtr<UStateTagComponent> StateTagComponent;
 
 
 public:	
