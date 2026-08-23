@@ -125,21 +125,33 @@ void APlantBed::EndPlay(const EEndPlayReason::Type EndplayReason)
 }
 
 // 获取土壤肥力
-float APlantBed::GetSoliFertility() const
+float APlantBed::GetSoilFertility() const
 {
 	return SoilFertility;
 }
 
 // 设置土壤肥力
-void APlantBed::SetSoliFertility(float Fertility)
+void APlantBed::SetSoilFertility(float Fertility)
 {
 	SoilFertility = Fertility;
 }
 
 // 获取土壤湿度
-float APlantBed::GetSoliMoisture() const
+float APlantBed::GetSoilMoisture() const
 {
 	return Moisture;
+}
+
+// 获取土壤辐射等级
+int32 APlantBed::GetRadiationLevel() const
+{
+	return RadiationLevel;
+}
+
+// 获取土壤毒性
+float APlantBed::GetToxcity() const
+{
+	return Toxicity;
 }
 
 // 浇水

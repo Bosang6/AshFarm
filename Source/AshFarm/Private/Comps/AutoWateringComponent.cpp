@@ -106,7 +106,7 @@ void UAutoWateringComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	}
 
 	// 检查土壤湿度
-	if(Owner->GetSoliMoisture() < MoistureThreshold)
+	if(Owner->GetSoilMoisture() < MoistureThreshold)
 	{
 		// 检查水箱是否有水
 		if(WaterSource->GetResourceCount(EResourcesType::Water) <= 0)

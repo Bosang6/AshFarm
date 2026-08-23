@@ -73,7 +73,7 @@ void UAutoFertilityComponent::TickComponent(float DeltaTime, ELevelTick TickType
 	}
 
 	// 检查土壤湿度
-	if(Owner->GetSoliFertility() < FertilityThreshold)
+	if(Owner->GetSoilFertility() < FertilityThreshold)
 	{
 		// 检查水箱是否有水
 		if(InternalStorage <= 0)

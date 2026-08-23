@@ -87,15 +87,23 @@ public:
 
 	// 获取土壤肥力
 	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "获取土壤肥力"))
-	float GetSoliFertility() const; // const 表示这个函数不会修改类的变量
+	float GetSoilFertility() const; // const 表示这个函数不会修改类的变量
 
 	// 设置土壤肥力
 	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "设置土壤肥力"))
-	void SetSoliFertility(float Fertility);
+	void SetSoilFertility(float Fertility);
 
 	// 获取土壤湿度
 	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "获取土壤湿度"))
-	float GetSoliMoisture() const;
+	float GetSoilMoisture() const;
+
+	// 获取土壤辐射等级
+	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "获取土壤辐射等级"))
+	int32 GetRadiationLevel() const;
+
+	// 获取土壤毒性
+	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "获取土壤毒性"))
+	float GetToxcity() const;
 
 	// 浇水
 	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "浇水"))
