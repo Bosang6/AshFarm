@@ -5,12 +5,12 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "Components/ActorComponent.h"
-#include "AudioFeedbackComponent.generated.h"
+#include "FeedbackComponent.generated.h"
 
 #pragma region 音效配置数据资产
 
 UCLASS(BlueprintType, meta = (DisplayName = "音效配置数据资产"))
-class ASHFARM_API UAudioFeedbackDataAsset : public UDataAsset
+class ASHFARM_API UFeedbackDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
 
@@ -31,13 +31,13 @@ public:
 #pragma endregion
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class ASHFARM_API UAudioFeedbackComponent : public UActorComponent
+class ASHFARM_API UFeedbackComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UAudioFeedbackComponent();
+	UFeedbackComponent();
 
 	// ==================
 	// 配置数据
@@ -45,7 +45,7 @@ public:
 
 	// 音效配置
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "音效配置", meta = (DisplayName = "音效配置数据资产"))
-	TObjectPtr<UAudioFeedbackDataAsset> AudioConfig = nullptr;
+	TObjectPtr<UFeedbackDataAsset> AudioConfig = nullptr;
 
 	// 音量倍数
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "音效配置", meta = (DisplayName = "音量乘数"))

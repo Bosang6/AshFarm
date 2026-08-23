@@ -37,7 +37,7 @@ ABuilding::ABuilding()
 
 	FloatingTextComponent = CreateDefaultSubobject<UFloatingTextComponent>(TEXT("漂浮文本组件"));
 
-	AudioFeedbackComponent = CreateDefaultSubobject<UAudioFeedbackComponent>(TEXT("音效反馈组件"));
+	FeedbackComponent = CreateDefaultSubobject<UFeedbackComponent>(TEXT("音效反馈组件"));
 	
 	StateTagComponent = CreateDefaultSubobject<UStateTagComponent>(TEXT("状态标签组件"));
 }

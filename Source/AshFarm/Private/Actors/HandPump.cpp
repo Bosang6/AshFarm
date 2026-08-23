@@ -113,7 +113,7 @@ float AHandPump::PumpWater()
 		return 0.0f;
 	}
 
-	if(!IsValid(AudioFeedbackComponent))
+	if(!IsValid(FeedbackComponent))
 	{
 		UE_LOG(A_LogAshFarm, Warning, TEXT("手压井ID: %s 没有音效反馈组件"), *DeviceID.ToString());
 		return 0.0f;
@@ -158,7 +158,7 @@ float AHandPump::PumpWater()
 			DurabilityComponent->TakeDamage(DurabilityLossPerPump);
 
 			// 播放音效
-			AudioFeedbackComponent->PlaySound(FName(TEXT("手压井压水")));
+			FeedbackComponent->PlaySound(FName(TEXT("手压井压水")));
 
 			// 记录泵水次数
 			PumpCount++;

@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Comps/AudioFeedbackComponent.h"
+#include "Comps/FeedbackComponent.h"
 #include "AshFarm.h"
 #include "Kismet/GameplayStatics.h"
 
 #pragma region 音效配置数据资产
 // 获取音效 (加载资源)
-USoundBase* UAudioFeedbackDataAsset::GetSound(FName EventName) const
+USoundBase* UFeedbackDataAsset::GetSound(FName EventName) const
 {
 	// SoundMap.Find(EventName) 返回的是一个指向 TSoftObjectPtr<USoundBase> 的指针 【指向指针的指针】
 	const TSoftObjectPtr<USoundBase> SoundPtr = SoundMap.FindRef(EventName);
@@ -23,7 +23,7 @@ USoundBase* UAudioFeedbackDataAsset::GetSound(FName EventName) const
 
 
 // Sets default values for this component's properties
-UAudioFeedbackComponent::UAudioFeedbackComponent()
+UFeedbackComponent::UFeedbackComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
@@ -34,7 +34,7 @@ UAudioFeedbackComponent::UAudioFeedbackComponent()
 
 
 // Called when the game starts
-void UAudioFeedbackComponent::BeginPlay()
+void UFeedbackComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -48,7 +48,7 @@ void UAudioFeedbackComponent::BeginPlay()
 	// 加载数据资产
 	if(!AudioConfig)
 	{
-		AudioConfig = LoadObject<UAudioFeedbackDataAsset>(this, TEXT("/Game/0_/Config/DA_AudioConfig.DA_AudioConfig"));
+		AudioConfig = LoadObject<UFeedbackDataAsset>(this, TEXT("/Game/0_/Config/DA_AudioConfig.DA_AudioConfig"));
 		if(AudioConfig)
 		{
 			UE_LOG(A_LogAshFarm, Warning, TEXT("成功加载音效数据表"));
@@ -64,7 +64,7 @@ void UAudioFeedbackComponent::BeginPlay()
 
 
 // Called every frame
-void UAudioFeedbackComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UFeedbackComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -72,7 +72,7 @@ void UAudioFeedbackComponent::TickComponent(float DeltaTime, ELevelTick TickType
 }
 
 // 播放音效 2D
-void UAudioFeedbackComponent::PlaySound(FName EventName)
+void UFeedbackComponent::PlaySound(FName EventName)
 {
 	if(!AudioConfig)
 	{
@@ -99,7 +99,7 @@ void UAudioFeedbackComponent::PlaySound(FName EventName)
 }
 
 // 在指定位置处播放音效
-void UAudioFeedbackComponent::PlaySoundAtLocation(FName EventName, FVector Location)
+void UFeedbackComponent::PlaySoundAtLocation(FName EventName, FVector Location)
 {
 	if(!AudioConfig)
 	{
