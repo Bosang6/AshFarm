@@ -31,7 +31,7 @@ public:
 
 	// 每次浇水量
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "状态", meta = (DisplayName = "每次浇水量"))
-	float WaterAmountPerTick = 0.5f;
+	float WaterAmountPerTick = 1.0f;
 
 	// 水源水箱
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "状态", meta = (DisplayName = "水源水箱"))
@@ -48,4 +48,7 @@ public:
 private:
 
 	TObjectPtr<APlantBed> Owner = nullptr;
+
+	// 上次浇水是否失败，防止日志 Spam (水箱指针为空 或 水箱空了)
+	bool bLastFailed = false;
 };

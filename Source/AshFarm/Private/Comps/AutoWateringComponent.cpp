@@ -91,8 +91,12 @@ void UAutoWateringComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 	if(!IsValid(WaterSource))
 	{
-		UE_LOG(A_LogAshFarm, Warning, TEXT("自动浇水组件: 水源水箱未初始化，未执行浇水操作"));
-		return;
+		if(!bLastFailed)
+		{
+			UE_LOG(A_LogAshFarm, Warning, TEXT("自动浇水组件: 水源水箱未初始化，未执行浇水操作"));
+			bLastFailed = true;
+			return;
+		}
 	}
 
 	if(!IsValid(Owner))
@@ -105,22 +109,29 @@ void UAutoWateringComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	if(Owner->GetSoliMoisture() < MoistureThreshold)
 	{
 		// 检查水箱是否有水
-		if(WaterSource->GetResourceCount(EResourcesType::Water) < WaterAmountPerTick)
+		if(WaterSource->GetResourceCount(EResourcesType::Water) <= 0)
 		{
-			UE_LOG(A_LogAshFarm, Warning, TEXT("自动浇水组件: 水源水箱水量不足，未执行浇水操作"));
+			if(!bLastFailed)
+			{
+				UE_LOG(A_LogAshFarm, Warning, TEXT("自动浇水组件: 水源水箱水量不足，未执行浇水操作"));
+				bLastFailed = true;
+			}
 			return;
 		}
 
 		// 计算每次浇水量是否超过水箱余量
 		float WaterToTake = FMath::Min(WaterAmountPerTick, WaterSource->GetResourceCount(EResourcesType::Water));
 		// 从水箱中移除水
-		// ===============================================================================================
-		// 这里有BUG, WaterAmountPerTick = 0.5 作为RemoveResource() 的参数，在数据转换为int32时为0
 		UE_LOG(A_LogAshFarm, Warning, TEXT("自动浇水组件: 浇水 %d"), WaterSource->RemoveResource(EResourcesType::Water, WaterToTake));
 		WaterSource->RemoveResource(EResourcesType::Water, WaterToTake);
-		// =====================================================================================================
 		// 浇水
 		Owner->ReceiveMoisture(WaterToTake);
+
+		bLastFailed = false;
+	}
+	else
+	{
+		bLastFailed = false;
 	}
 
 }
