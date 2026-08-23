@@ -6,6 +6,8 @@
 #include "Engine/DataAsset.h"
 #include "Components/ActorComponent.h"
 #include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"			// 生存Niagara的核心工具库
+#include "NiagaraComponent.h"				// Niagara 组件本身
 #include "FeedbackComponent.generated.h"
 
 #pragma region 反馈配置数据资产
@@ -55,9 +57,9 @@ public:
 	// 配置数据
 	// ==================
 
-	// 音效配置
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "音效配置", meta = (DisplayName = "音效配置数据资产"))
-	TObjectPtr<UFeedbackDataAsset> AudioConfig = nullptr;
+	// 反馈配置
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "音效配置", meta = (DisplayName = "反馈配置数据资产"))
+	TObjectPtr<UFeedbackDataAsset> FeedbackConfig = nullptr;
 
 	// 音量倍数
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "音效配置", meta = (DisplayName = "音量乘数"))
@@ -67,9 +69,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "音效配置", meta = (DisplayName = "音高乘数"))
 	float PitchMultiplier = 1.0f;
 
+	// 特效缩放倍数
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "特效配置", meta = (DisplayName = "特效缩放乘数"))
+	float ScaleMultiplier = 1.0f;
+
 	// ==================
 	// 功能函数
 	// ==================
+
+	// ============ 音效 ================
 
 	// 播放音效 2D
 	UFUNCTION(BlueprintCallable, Category = "音效配置", meta = (DisplayName = "播放音效"))
@@ -78,6 +86,20 @@ public:
 	// 在指定位置处播放音效
 	UFUNCTION(BlueprintCallable, Category = "音效配置", meta = (DisplayName = "在指定位置处播放音效"))
 	void PlaySoundAtLocation(FName EventName, FVector Location);
+
+	// ============ 特效 ================
+
+	// 在指定位置处播放特效
+	UFUNCTION(BlueprintCallable, Category = "特效配置", meta = (DisplayName = "在指定位置处播放特效"))
+	void SpawnEffect(FName EventName, FVector Location, FRotator Rotation);
+
+	// 在指定位置处播放特效 (附着在指定组件上)
+	UFUNCTION(BlueprintCallable, Category = "特效配置", meta = (DisplayName = "在指定位置处播放特效 (附着在指定组件上)"))
+	void SpawnEffectAttached(FName EventName, USceneComponent* AttachTo, FName SocketName);
+
+	// 停止播放特效
+	UFUNCTION(BlueprintCallable, Category = "特效配置", meta = (DisplayName = "停止播放特效"))
+	void StopEffect(FName EventName);
 
 protected:
 	// Called when the game starts
