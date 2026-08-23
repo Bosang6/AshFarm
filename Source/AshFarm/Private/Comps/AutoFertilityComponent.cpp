@@ -19,13 +19,13 @@ UAutoFertilityComponent::UAutoFertilityComponent()
 	Mesh->AttachToComponent(this, FAttachmentTransformRules::KeepRelativeTransform);
 	
 	// 加载默认静态网格体 （临时先用一下，后期改）
-	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/PolygonFarm/Meshes/Props/SM_Prop_Vice_Slide_01.SM_Prop_Vice_Slide_01"));
+	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/PolygonFarm/Meshes/Props/SM_Prop_LetterBox_03.SM_Prop_LetterBox_03"));
 	if(!MeshAsset.Succeeded())
 	{
 		MeshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("/Engine/BasicShapes/Cube.Cube"));
 	}
 	Mesh->SetStaticMesh(MeshAsset.Object.Get());
-	Mesh->SetRelativeLocation(FVector(50.0f, 50.0f, 0.0f));
+	Mesh->SetRelativeLocation(FVector(-100.0f, -100.0f, 0.0f));
 }
 
 
@@ -87,12 +87,14 @@ void UAutoFertilityComponent::TickComponent(float DeltaTime, ELevelTick TickType
 		}
 
 		// 计算每次施肥量是否超过余量
-		float ToTake = FMath::Min(FertilityAmountPerTick, InternalStorage);
+		int32 ToTake = FMath::Min(FertilityAmountPerTick, InternalStorage);
 		// 从水箱中移除水
 		InternalStorage -= ToTake;
 		InternalStorage = FMath::Clamp(InternalStorage, 0, MaxStorage);
 		// 施肥
 		Owner->ReceiveFertility(ToTake);
+
+		UE_LOG(A_LogAshFarm, Warning, TEXT("自动施肥组件: 施肥 %d, 当前储备: %d"), ToTake, InternalStorage);
 
 		bLastFailed = false;
 	}

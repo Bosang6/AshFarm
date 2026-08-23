@@ -26,11 +26,11 @@ public:
 
 	// 土壤肥力阈值
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "状态", meta = (DisplayName = "土壤肥力阈值"))
-	float FertilityThreshold = 20.0f;
+	int32 FertilityThreshold = 20;
 
 	// 每次施肥量
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "状态", meta = (DisplayName = "每次施肥量"))
-	float FertilityAmountPerTick = 1.0f;
+	int32 FertilityAmountPerTick = 1;
 
 	// 内部存储量
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "状态", meta = (DisplayName = "内部存储量"))
