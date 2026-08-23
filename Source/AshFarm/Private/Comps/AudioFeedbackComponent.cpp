@@ -2,6 +2,8 @@
 
 
 #include "Comps/AudioFeedbackComponent.h"
+#include "AshFarm.h"
+#include "Kismet/GameplayStatics.h"
 
 #pragma region 音效配置数据资产
 // 获取音效 (加载资源)
@@ -36,7 +38,27 @@ void UAudioFeedbackComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	Owner = GetOwner();
+	if(!Owner)
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("音效组件: Owner无效"));
+		return;
+	}
+
+	// 加载数据资产
+	if(!AudioConfig)
+	{
+		AudioConfig = LoadObject<UAudioFeedbackDataAsset>(this, TEXT("/Game/0_/Config/DA_AudioConfig.DA_AudioConfig"));
+		if(AudioConfig)
+		{
+			UE_LOG(A_LogAshFarm, Warning, TEXT("成功加载音效数据表"));
+		}
+		else
+		{
+			UE_LOG(A_LogAshFarm, Error, TEXT("未能加载音效数据表，找不到资源: /Game/0_/Config/DA_AudioConfig.DA_AudioConfig"));
+		}
+	}
+
 	
 }
 
@@ -49,3 +71,57 @@ void UAudioFeedbackComponent::TickComponent(float DeltaTime, ELevelTick TickType
 	// ...
 }
 
+// 播放音效 2D
+void UAudioFeedbackComponent::PlaySound(FName EventName)
+{
+	if(!AudioConfig)
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("未找到音效配置数据表"));
+		return;
+	}
+
+	// 1. 先查缓存
+	TObjectPtr<USoundBase> Sound = LoadedSoundMap.FindRef(EventName);
+	if(!Sound)
+	{
+		// 2. 缓存没有，从配置数据资产中获取
+		Sound = AudioConfig->GetSound(EventName);
+		if(!Sound)
+		{
+			UE_LOG(A_LogAshFarm, Warning, TEXT("未找到音效: %s"), *EventName.ToString());
+			return;
+		}
+		// 3.缓存音效
+		LoadedSoundMap.Add(EventName, Sound);
+	}
+
+	UGameplayStatics::PlaySound2D(Owner->GetWorld(), Sound, VolumeMultiplier, PitchMultiplier);
+}
+
+// 在指定位置处播放音效
+void UAudioFeedbackComponent::PlaySoundAtLocation(FName EventName, FVector Location)
+{
+	if(!AudioConfig)
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("未找到音效配置数据表"));
+		return;
+	}
+
+	// 1. 先查缓存
+	TObjectPtr<USoundBase> Sound = LoadedSoundMap.FindRef(EventName);
+	if(!Sound)
+	{
+		// 2. 缓存没有，从配置数据资产中获取
+		Sound = AudioConfig->GetSound(EventName);
+		if(!Sound)
+		{
+			UE_LOG(A_LogAshFarm, Warning, TEXT("未找到音效: %s"), *EventName.ToString());
+			return;
+		}
+		// 3.缓存音效
+		LoadedSoundMap.Add(EventName, Sound);
+	}
+
+	UGameplayStatics::PlaySoundAtLocation(Owner->GetWorld(), Sound, Location, VolumeMultiplier, PitchMultiplier);
+
+}
