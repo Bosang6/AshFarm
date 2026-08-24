@@ -71,7 +71,7 @@ private:
 
 	TObjectPtr<AActor> Owner;
 
-	TObjectPtr<AInventory> Inventory;
+	TArray<TObjectPtr<AInventory>> InventoryList;
 
 	// 组件安装规则缓存 (静态不能使用UPROPERTY)
 	static TMap<TSubclassOf<UActorComponent>, FInstallRule> InstallRuleCache;

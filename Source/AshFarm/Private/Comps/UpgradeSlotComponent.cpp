@@ -4,6 +4,7 @@
 #include "Comps/UpgradeSlotComponent.h"
 #include "AshFarm.h"
 #include "Inventory/Inventory.h"
+#include "EngineUtils.h"
 
 TMap<TSubclassOf<UActorComponent>, FInstallRule> UUpgradeSlotComponent::InstallRuleCache = {};
 
@@ -68,6 +69,12 @@ void UUpgradeSlotComponent::BeginPlay()
 
 		InstallRuleCache.Add(Rule->ComponentClass, *Rule);
 		UE_LOG(A_LogAshFarm, Error, TEXT("组件安装规则表加载成功， %s"), *RowName.ToString());
+	}
+
+	// 初始化 InventoryList
+	for(TActorIterator<AInventory> It(GetWorld()); It; ++It)
+	{
+		InventoryList.Add(*It);
 	}
 	
 }
@@ -257,5 +264,24 @@ bool UUpgradeSlotComponent::CheckCompatibility(TSubclassOf<UActorComponent> Upgr
 // 检查物品资源是否足够
 bool UUpgradeSlotComponent::CheckCost(const FInstallRule& Rule) const
 {
-	return false;
+	if(InventoryList.IsEmpty())
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("请先设置仓库！"));
+		return false;
+	}
+
+	for(const auto& [Type, Count] : Rule.InstallCost)
+	{
+		// 检查该仓库物品物资是否足够
+		for(const auto& Inventory : InventoryList)
+		{
+			if(Inventory && Inventory->HasEnoughResources(Type, Count))
+			{
+				UE_LOG(A_LogAshFarm, Warning, TEXT("%s 缺少物品 %s %d 个"), *Rule.ComponentClass->GetName(), *UEnum::GetValueAsString(Type), Count);
+				return false;
+			}
+		}
+	}
+
+	return true;
 }
