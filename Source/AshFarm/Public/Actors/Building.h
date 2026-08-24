@@ -32,6 +32,18 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// =================
+	// 回调函数 
+	// =================
+
+	// 当即将损坏时
+	UFUNCTION(Category = "Building", meta = (DisplayName = "当即将损坏时"))
+	void OnCriticalDurability(float Durability);
+
+	// 当损坏时
+	UFUNCTION(Category = "Building", meta = (DisplayName = "当损坏时"))
+	void OnBroken(float Durability);
+
 	// 根组件
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Root")
 	TObjectPtr<USceneComponent> Root;

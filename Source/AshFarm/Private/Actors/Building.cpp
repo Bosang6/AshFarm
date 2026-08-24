@@ -49,6 +49,11 @@ ABuilding::ABuilding()
 void ABuilding::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// 绑定委托
+	DurabilityComponent->OnCritical.AddDynamic(this, &ABuilding::OnCriticalDurability);
+	DurabilityComponent->OnBroken.AddDynamic(this, &ABuilding::OnBroken);
+
 	
 }
 
@@ -82,4 +87,23 @@ void ABuilding::OnInteract_Implementation()
 bool ABuilding::IsInteractable_Implementation() const
 {
 	return !DurabilityComponent->IsBroken();
+}
+
+// =================
+// 回调函数 
+// =================
+
+// 当即将损坏时
+void ABuilding::OnCriticalDurability(float Durability)
+{
+	// TODO: UI 提示设备即将损坏
+	FloatingTextComponent->ShowText(TEXT("设备即将损坏"), FColor::Red, 1.0f, 3.0f, 200.0f);
+}
+
+// 当损坏时
+void ABuilding::OnBroken(float Durability)
+{
+	// TODO: UI 提示设备损坏
+
+	FloatingTextComponent->ShowText(TEXT("设备损坏"), FColor::Red, 1.0f, 3.0f, 200.0f);
 }

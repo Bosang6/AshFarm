@@ -21,13 +21,12 @@ void UDurabilityComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
-	if(!IsValid(GetOwner()))
+	Owner = GetOwner();	
+	if(!IsValid(Owner))
 	{
 		UE_LOG(A_LogAshFarm, Warning, TEXT("耐久度组件: Owner 无效"));
 		return;
 	}
-	Owner = GetOwner();	
 	
 	ensureAlwaysMsgf(MaxDurability > 0.0f, TEXT("MaxDurability 必须大于 0.0f"));
 }
@@ -103,7 +102,15 @@ bool UDurabilityComponent::Repair()
 // Take Damage 承受伤害
 float UDurabilityComponent::TakeDamage(float DamageAmount)
 {
-	if(!IsValid(Owner)) return 0.0f;
+	if(!IsValid(Owner))
+	{
+		Owner = GetOwner();	
+		if(!IsValid(Owner))
+		{
+			UE_LOG(A_LogAshFarm, Error, TEXT("耐久度组件: Owner 无效"));
+			return 0.0f;
+		}
+	} 
 
 	if(DamageAmount <= 0.0f) return 0.0f;
 
