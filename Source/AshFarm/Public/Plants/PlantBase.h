@@ -9,6 +9,10 @@
 
 #include "PlantBase.generated.h"
 
+// 参数：1. 委托的类型名称 2. 类型 3. 名称 (这是一组参数)
+// 可以修改 One, 最多九个参数
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlantMatured, UPlantBase*, Plant);
+
 
 /**
  * 植物基类
@@ -43,6 +47,15 @@ public:
 	// PostEditChangeProperty 
 	// 编辑器专用回调, 在Detail面板中, 任何数据被修改都会被调用。用于更新编辑时状态，便于策划观察。
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+
+	// ====================
+	// 委托
+	// ====================
+
+	// 植物成熟事件
+	// BlueprintAssignable：允许在蓝图中实现该委托
+	UPROPERTY(BlueprintAssignable, Category = "植物|事件")
+	FOnPlantMatured OnPlantMatured;
 
 	// ====================
 	// 植物配置数据表 

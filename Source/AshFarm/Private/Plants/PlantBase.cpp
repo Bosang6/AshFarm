@@ -243,7 +243,10 @@ float UPlantBase::GetGrowthProgressPercentage() const
 
 // 当成熟时调用
 void UPlantBase::OnMature()
-{
+{   
+    // 广播事件
+    OnPlantMatured.Broadcast(this);
+
     SetPlantQuality();
     UE_LOG(A_LogAshFarm, Warning, TEXT("收获了 %s (品质: %s)"), *GetPlantName(), *GetQualityText(CurrentQuality));
 }
