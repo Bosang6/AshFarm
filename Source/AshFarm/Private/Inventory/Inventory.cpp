@@ -109,7 +109,7 @@ int32 AInventory::AddResource(EResourcesType Type, int32 Count)
 }
 
 // 移除资源
-int32 AInventory::RemoveResource(EResourcesType Type, int32 Count)
+int32 AInventory::RemoveResources(EResourcesType Type, int32 Count)
 {
 	if(Count <= 0)
 	{

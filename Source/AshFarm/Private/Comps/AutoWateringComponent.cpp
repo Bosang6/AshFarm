@@ -122,8 +122,8 @@ void UAutoWateringComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 		// 计算每次浇水量是否超过水箱余量
 		float WaterToTake = FMath::Min(WaterAmountPerTick, WaterSource->GetResourceCount(EResourcesType::Water));
 		// 从水箱中移除水
-		UE_LOG(A_LogAshFarm, Warning, TEXT("自动浇水组件: 浇水 %d"), WaterSource->RemoveResource(EResourcesType::Water, WaterToTake));
-		WaterSource->RemoveResource(EResourcesType::Water, WaterToTake);
+		UE_LOG(A_LogAshFarm, Warning, TEXT("自动浇水组件: 浇水 %d"), WaterSource->RemoveResources(EResourcesType::Water, WaterToTake));
+		WaterSource->RemoveResources(EResourcesType::Water, WaterToTake);
 		// 浇水
 		Owner->ReceiveMoisture(WaterToTake);
 

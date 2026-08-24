@@ -22,7 +22,7 @@ void AWaterTank::OnInteractWith_Implementation(AActor* Target)
     
     PlantBed->ReceiveMoisture(MoistureAmount);
 
-    RemoveResource(EResourcesType::Water, MoistureAmount);
+    RemoveResources(EResourcesType::Water, MoistureAmount);
 
     UE_LOG(A_LogAshFarm, Warning, TEXT("WaterTank: %s 添加了 %f 水"), *PlantBed->GetName(), MoistureAmount);
 }

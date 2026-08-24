@@ -318,6 +318,9 @@ bool UUpgradeSlotComponent::InstallUpgrade(TSubclassOf<UActorComponent> UpgradeC
 
 	if(TObjectPtr<UActorComponent> NewUpgrade = Owner->AddComponentByClass(UpgradeClass, false, FTransform::Identity, false))
 	{
+		// 扣除资源
+		DeductCost(*FindInstallRule(UpgradeClass));
+
 		InstalledUpgrades.Add(NewUpgrade);
 		return true;
 	}
@@ -363,4 +366,27 @@ bool UUpgradeSlotComponent::UninstallUpgrade(UActorComponent* Upgrade)
 	Upgrade->DestroyComponent();
 
 	return true;
+}
+
+// 扣除资源
+void UUpgradeSlotComponent::DeductCost(const FInstallRule& Rule)
+{
+	if(InventoryList.IsEmpty())
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("请先设置仓库"));
+		return;
+	}
+
+	for(const auto& [Type, Count] : Rule.InstallCost)
+	{
+		// 检查该仓库物品物资是否足够
+		for(const auto& Inventory : InventoryList)
+		{
+			if(Inventory && Inventory->HasEnoughResources(Type, Count))
+			{
+				Inventory->RemoveResources(Type, Count);
+				break;
+			}
+		}
+	}
 }

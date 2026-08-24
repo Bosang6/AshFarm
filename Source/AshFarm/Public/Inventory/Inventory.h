@@ -54,7 +54,7 @@ public:
 
 	// 移除资源
 	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "移除资源"))
-	int32 RemoveResource(EResourcesType Type, int32 Count);
+	int32 RemoveResources(EResourcesType Type, int32 Count);
 
 	// 查询资源数量
 	UFUNCTION(BlueprintCallable, Category = "仓库", meta = (DisplayName = "查询资源数量"))

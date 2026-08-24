@@ -23,7 +23,7 @@ void AFertilityPile::OnInteractWith_Implementation(AActor* Target)
     
     PlantBed->ReceiveFertility(FertilityAmount);
 
-    RemoveResource(EResourcesType::Fertility, FertilityAmount);
+    RemoveResources(EResourcesType::Fertility, FertilityAmount);
 
     UE_LOG(A_LogAshFarm, Warning, TEXT("FertilityPile: %s 施了 %f 肥"), *PlantBed->GetName(), FertilityAmount);
 }

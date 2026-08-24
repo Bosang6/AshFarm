@@ -84,4 +84,7 @@ private:
 
 	// 检查物品资源是否足够
 	bool CheckCost(const FInstallRule& Rule) const;
+
+	// 扣除资源
+	void DeductCost(const FInstallRule& Rule);
 };
