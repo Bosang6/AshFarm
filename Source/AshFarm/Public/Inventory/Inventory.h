@@ -15,6 +15,20 @@
 class USceneComponent;
 class UStaticMeshComponent;
 
+// 委托: 资源数量低于临界值时触发
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
+	FOnResourceLow, 
+	EResourcesType, ResourcesType,
+	int32, CurrentCount,
+	int32, MaxCapacity
+);
+
+// 委托: 当资源数量高于临界值时，恢复
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+	FOnResourceRestore, 
+	EResourcesType, ResourcesType
+);
+
 UCLASS()
 class ASHFARM_API AInventory : public ABuilding
 {
@@ -26,6 +40,17 @@ public:
 	// 可接受资源类型
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "仓库", meta = (DisplayName = "可接受资源类型"))
 	TSet<EResourcesType> AcceptedTypes;
+
+	// =================
+	// 资源报警委托
+	// =================
+
+	UPROPERTY(BlueprintAssignable, Category = "仓库", meta = (DisplayName = "当资源数量低于警戒值时"))
+	FOnResourceLow OnResourceLow;
+
+	UPROPERTY(BlueprintAssignable, Category = "仓库", meta = (DisplayName = "当资源数量恢复时"))
+	FOnResourceRestore OnResourceRestore;
+
 
 	// =================
 	// 仓库数据

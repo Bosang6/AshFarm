@@ -45,6 +45,10 @@ struct FResourcesConfig
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "资源配置", meta = (DisplayName = "最大数量"))
     int32 MaxCapacity = 200;
 
+    // 警戒阈值 (占比)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "资源配置", meta = (DisplayName = "警戒阈值 (占比)", ClampMin = "0.0", ClampMax = "1.0"))
+    float LowThresholdPercent = 0.2f;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "资源配置", meta = (DisplayName = "图标"))
     TSoftObjectPtr<UTexture2D> Icon;
 };

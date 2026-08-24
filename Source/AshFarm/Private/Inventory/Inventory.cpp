@@ -103,6 +103,13 @@ int32 AInventory::AddResource(EResourcesType Type, int32 Count)
 	// 存在：覆盖 | 不存在：添加
 	ResourcesInventory.Add(Type, Current + CanAdd);
 
+	// 检查资源是否高于警戒值
+	if(Current + CanAdd > Config->LowThresholdPercent * Config->MaxCapacity)
+	{
+		// 广播委托：资源数量高于警戒值
+		OnResourceRestore.Broadcast(Type);
+	}
+
 	UE_LOG(A_LogAshFarm, Warning, TEXT("仓库资源 %s 剩余数量: %d"), *GetResourceTypeText(Type), Current + CanAdd);
 
 	return CanAdd;
@@ -111,6 +118,21 @@ int32 AInventory::AddResource(EResourcesType Type, int32 Count)
 // 移除资源
 int32 AInventory::RemoveResources(EResourcesType Type, int32 Count)
 {
+	// 查询资源配置
+	const FResourcesConfig* Config = ResourcesConfigs.FindByPredicate(
+		[Type](const FResourcesConfig& Config)
+		{
+			return Config.Type == Type;
+		}
+	);
+
+	// 检查资源类型是否存在，如果不存在，则返回0，中断执行
+	if(!Config)
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("AddResource: 添加资源类型 %s 不存在"), *GetResourceTypeText(Type));
+		return 0;
+	}
+
 	if(Count <= 0)
 	{
 		UE_LOG(A_LogAshFarm, Warning, TEXT("RemoveResource: 移除资源数量必须大于0"));
@@ -138,6 +160,14 @@ int32 AInventory::RemoveResources(EResourcesType Type, int32 Count)
 	{
 		ResourcesInventory.Remove(Type);
 	}
+
+	// 检查资源数量是否低于警戒值
+	if(NewCount < Config->LowThresholdPercent * Config->MaxCapacity)
+	{
+		// 广播委托: 资源数量低于警戒值
+		OnResourceLow.Broadcast(Type, NewCount, Config->MaxCapacity);
+	}
+
 
 	UE_LOG(A_LogAshFarm, Warning, TEXT("仓库资源 %s 剩余数量: %d"), *GetResourceTypeText(Type), NewCount);
 
