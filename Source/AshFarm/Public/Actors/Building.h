@@ -17,6 +17,7 @@ class UBoxComponent;
 class USceneComponent;
 class UStaticMeshComponent;
 class UHighlightComponent;
+class UUpgradeSlotComponent;
 
 UCLASS()
 class ASHFARM_API ABuilding : public AActor, public IInteractable
@@ -62,6 +63,10 @@ protected:
 	// 状态标签组件
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "状态标签组件", meta = (DisplayName = "状态标签组件"))
 	TObjectPtr<UStateTagComponent> StateTagComponent;
+
+	// 升级槽组件
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "升级槽组件", meta = (DisplayName = "升级槽组件"))
+	TObjectPtr<UUpgradeSlotComponent> UpgradeSlotComponent;
 
 
 public:	

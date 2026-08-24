@@ -14,8 +14,6 @@ class UInputAction;
 class UPathFollowingComponent;
 struct FInputActionValue;  // #include "InputActionValue.h"
 
-
-
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 /**
@@ -71,14 +69,6 @@ public:
 	/** Constructor */
 	AAshFarmPlayerController();
 
-	// =========== 组件安装规则 =====================
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "组件功能", meta = (DisplayName = "组件安装规则表"))
-	TObjectPtr<UDataTable> InstallRuleTable;
-
-	// 组件安装规则缓存
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "组件功能", meta = (DisplayName = "组件安装规则缓存"))
-	TMap<TSubclassOf<UActorComponent>, FInstallRule> InstallRuleCache;
-
 	// 选中的Actor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "选择", meta = (DisplayName = "选中的Actor"))
 	TObjectPtr<AActor> SelectedActor;
@@ -90,9 +80,6 @@ public:
 	// 安装功能: 添加组件
 	UFUNCTION(BlueprintCallable, Category = "功能组件", meta = (DisplayName = "安装组件"))
 	void InstallComponentOnSelected(TSubclassOf<UActorComponent> ComponentClass);
-
-	UFUNCTION(BlueprintCallable, Category = "交互|组件安装")
-	bool CanInstallByDataTable(TSubclassOf<UActorComponent> CompClass, AActor* Target) const;
 
 protected:
 
@@ -112,10 +99,7 @@ protected:
 	void ClearSelection();
 
 private:
-	// 查找安装规则
-	const FInstallRule* FindInstallRule(TSubclassOf<UActorComponent> CompClass) const;
-	
-	
+
 };
 
 

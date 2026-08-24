@@ -4,6 +4,7 @@
 #include "Actors/Building.h"
 #include "Components/BoxComponent.h"
 #include "Comps/HighlightComponent.h"
+#include "Comps/UpgradeSlotComponent.h"
 
 #include "AshFarm.h"
 
@@ -40,6 +41,8 @@ ABuilding::ABuilding()
 	FeedbackComponent = CreateDefaultSubobject<UFeedbackComponent>(TEXT("音效反馈组件"));
 	
 	StateTagComponent = CreateDefaultSubobject<UStateTagComponent>(TEXT("状态标签组件"));
+
+	UpgradeSlotComponent = CreateDefaultSubobject<UUpgradeSlotComponent>(TEXT("升级槽组件"));
 }
 
 // Called when the game starts or when spawned

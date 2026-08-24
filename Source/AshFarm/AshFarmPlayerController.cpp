@@ -16,6 +16,7 @@
 #include "Inventory/Inventory.h"
 #include "Actors/PlantBed.h"
 #include "Actors/HandPump.h"
+#include "Comps/UpgradeSlotComponent.h"
 #include "AshFarm.h"
 
 AAshFarmPlayerController::AAshFarmPlayerController()
@@ -35,43 +36,6 @@ AAshFarmPlayerController::AAshFarmPlayerController()
 void AAshFarmPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// 加载 组件安装规则表
-	if(!InstallRuleTable)
-	{
-		InstallRuleTable = LoadObject<UDataTable>(nullptr, TEXT("/Game/0_/Comps/DT_InstallRule.DT_InstallRule"));
-	}
-
-	if(!IsValid(InstallRuleTable))
-	{
-		UE_LOG(A_LogAshFarm, Error, TEXT("组件安装规则表加载失败, 请检查 /Game/0_/Comps/DT_InstallRule.DT_InstallRule 是否存在"));
-	}
-	else
-	{
-		UE_LOG(A_LogAshFarm, Error, TEXT("组件安装规则表加载成功, 共加载 %d 条规则"), InstallRuleTable->GetRowNames().Num());
-	}
-
-	TArray<FName> RowNames = InstallRuleTable->GetRowNames();
-
-	for(const FName& RowName : RowNames)
-	{
-		const FInstallRule* Rule = InstallRuleTable->FindRow<FInstallRule>(RowName, TEXT(""));
-
-		if(!Rule)
-		{
-			UE_LOG(A_LogAshFarm, Error, TEXT("组件安装规则表加载失败，请检查 %s 是否存在"), *RowName.ToString());
-			continue;
-		}
-
-		if(!Rule->ComponentClass)
-		{
-			UE_LOG(A_LogAshFarm, Error, TEXT("组件安装规则表加载失败，请检查 %s 的 ComponentClass 是否存在"), *RowName.ToString());
-			continue;
-		}
-
-		InstallRuleCache.Add(Rule->ComponentClass, *Rule);
-		UE_LOG(A_LogAshFarm, Error, TEXT("组件安装规则表加载成功， %s"), *RowName.ToString());
-	}
 }
 
 void AAshFarmPlayerController::SetupInputComponent()
@@ -304,124 +268,14 @@ void AAshFarmPlayerController::InstallComponentOnSelected(TSubclassOf<UActorComp
 		return;
 	}
 
-	// 检查组件是否能够安装
-	if(!CanInstallByDataTable(ComponentClass, SelectedActor))
+	if(TObjectPtr<UUpgradeSlotComponent> UpgradeSlot = SelectedActor->FindComponentByClass<UUpgradeSlotComponent>())
 	{
-		UE_LOG(A_LogAshFarm, Error, TEXT("[组件安装] 该组件不能按照在该Actor上!"));
-		return;
+		UpgradeSlot->InstallUpgrade(ComponentClass);
 	}
-
-	// 检查是否可以重复安装组件
-	bool bAllowDuplicate = false;
-	const FInstallRule* Rule = FindInstallRule(ComponentClass);
-	if(Rule)
+	else
 	{
-		bAllowDuplicate = Rule->bAllowDuplicate;
+		UE_LOG(A_LogAshFarm, Error, TEXT("请先给选中的Actor添加UpgradeSlotComponent组件"));
 	}
-
-	UActorComponent* ExistingComponent = SelectedActor->FindComponentByClass(ComponentClass);
-	if(ExistingComponent && !bAllowDuplicate)
-	{
-		UE_LOG(A_LogAshFarm, Error, TEXT("该Actor已经存在该组件!"));
-		return;
-	}
-
-	/*
-		参数解释：
-		1. 需要实例化的组件
-		2. 是否手动Attach, true需要自己手动Attach，否则挂载在Root下
-		3. 位置与旋转关系
-		4. 是否需要延迟
-	*/
-	SelectedActor->AddComponentByClass(ComponentClass, false, FTransform::Identity, false);
-	UE_LOG(A_LogAshFarm, Warning, TEXT("成功安装组件: %s"), *ComponentClass->GetName());
 }
 
-// 查找安装规则
-const FInstallRule* AAshFarmPlayerController::FindInstallRule(TSubclassOf<UActorComponent> CompClass) const
-{
-	if(!InstallRuleTable)
-	{
-		UE_LOG(A_LogAshFarm, Error, TEXT("请先设置安装规则表!"));
-		return nullptr; 
-	}
-
-	if(!CompClass)
-	{
-		UE_LOG(A_LogAshFarm, Error, TEXT("请先设置组件类!"));
-		return nullptr;
-	}
-
-	// 从缓存中查找
-	if(const FInstallRule* Rule = InstallRuleCache.Find(CompClass))
-	{
-		return Rule;
-	}
-
-	// 组件可能是蓝图的组件，比如继承自 UGreenHouseComponent 的子类
-	// 因此需要判断 CompClass是否属于规则内的一个子类
-	for(const auto& Pair : InstallRuleCache)
-	{
-		if(CompClass->IsChildOf(Pair.Key))
-		{
-			return &Pair.Value;
-		}
-	}
-
-	return nullptr;
-}
-
-// 检查是否可以安装组件
-bool AAshFarmPlayerController::CanInstallByDataTable(TSubclassOf<UActorComponent> CompClass, AActor* Target) const
-{
-	if(!IsValid(Target))
-	{
-		UE_LOG(A_LogAshFarm, Warning, TEXT("请先选中一个Actor后才能安装组件!"));
-		return false;
-	}
-
-	if(!CompClass)
-	{
-		UE_LOG(A_LogAshFarm, Warning, TEXT("请先设置组件类!"));
-		return false;
-	}
-
-	if(!IsValid(InstallRuleTable))
-	{
-		UE_LOG(A_LogAshFarm, Warning, TEXT("请先设置安装规则表!"));
-		return false;
-	}
-
-	const FInstallRule* Rule = FindInstallRule(CompClass);
-	if(!Rule)
-	{
-		UE_LOG(A_LogAshFarm, Warning, TEXT("%s 未找到安装规则!"), *CompClass->GetName());
-		return false;
-	}
-
-	// 规则白名单中没有指定规则，则不限制安装
-	if(Rule->ValidOwners.IsEmpty())
-	{
-		UE_LOG(A_LogAshFarm, Warning, TEXT("%s 未指定有效安装规则，默认允许安装在所有Actor上"), *CompClass->GetName());
-		return true;
-	}
-
-	// 子类判断
-	for(const auto& OwnerClass : Rule->ValidOwners)
-	{
-		if(!OwnerClass)
-		{
-			continue;
-		}
-
-		if(Target->IsA(OwnerClass))
-		{
-			UE_LOG(A_LogAshFarm, Warning, TEXT("%s 可以安装在 %s 上"), *CompClass->GetName(), *OwnerClass->GetName());
-			return true;
-		}
-	}
-
-	UE_LOG(A_LogAshFarm, Warning, TEXT("%s 不能安装在 %s 上"), *CompClass->GetName(), *Target->GetName());
-	return false;
-}
 	

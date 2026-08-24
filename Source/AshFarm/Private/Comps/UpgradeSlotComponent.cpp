@@ -270,16 +270,27 @@ bool UUpgradeSlotComponent::CheckCost(const FInstallRule& Rule) const
 		return false;
 	}
 
+	TMap<EResourcesType, bool> Enough;
 	for(const auto& [Type, Count] : Rule.InstallCost)
 	{
+		Enough.Add(Type, false);
 		// 检查该仓库物品物资是否足够
 		for(const auto& Inventory : InventoryList)
 		{
 			if(Inventory && Inventory->HasEnoughResources(Type, Count))
 			{
-				UE_LOG(A_LogAshFarm, Warning, TEXT("%s 缺少物品 %s %d 个"), *Rule.ComponentClass->GetName(), *UEnum::GetValueAsString(Type), Count);
-				return false;
+				Enough.Emplace(Type, true); // 修改Pair
+				break; // 没有必要继续检查下一个仓库，直接检查下一个物资
 			}
+		}
+	}
+
+	// 检查是否所有物品资源都足够
+	for(const auto& [Type, IsEnough] : Enough)
+	{
+		if(!IsEnough)
+		{
+			return false;
 		}
 	}
 
