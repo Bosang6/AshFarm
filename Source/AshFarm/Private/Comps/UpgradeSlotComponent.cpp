@@ -285,3 +285,71 @@ bool UUpgradeSlotComponent::CheckCost(const FInstallRule& Rule) const
 
 	return true;
 }
+
+// 安装组件
+bool UUpgradeSlotComponent::InstallUpgrade(TSubclassOf<UActorComponent> UpgradeClass)
+{
+	if(!IsValid(UpgradeClass))
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("请先设置组件类！"));
+		return false;
+	}
+
+	if(!CanInstall(UpgradeClass))
+	{
+		return false;
+	}
+
+	if(!IsValid(Owner))
+	{
+		return false;
+	}
+
+	if(TObjectPtr<UActorComponent> NewUpgrade = Owner->AddComponentByClass(UpgradeClass, false, FTransform::Identity, false))
+	{
+		InstalledUpgrades.Add(NewUpgrade);
+		return true;
+	}
+	else
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("无法安装 %s"), *UpgradeClass->GetName());
+		return false;
+	}
+}
+
+// 卸载组件
+bool UUpgradeSlotComponent::UninstallUpgrade(UActorComponent* Upgrade)
+{
+	// 检查Owner
+	if(!IsValid(Owner))
+	{
+		return false;
+	}
+
+	// 检查要卸载的组件类是否有效
+	if(!IsValid(Upgrade))
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("请先设置组件类！"));
+		return false;
+	}
+
+	int32 Index = InstalledUpgrades.Find(Upgrade);
+	if(Index == INDEX_NONE)
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("未安装该组件！"));
+		return false;
+	}
+
+	InstalledUpgrades.RemoveAt(Index);
+
+	// 如果组件是场景组件，需要先分离组件再销毁组件
+	if(TObjectPtr<USceneComponent> SceneComp = Cast<USceneComponent>(Upgrade))
+	{
+		// 分离场景组件
+		SceneComp->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	}
+	Upgrade->UnregisterComponent();
+	Upgrade->DestroyComponent();
+
+	return true;
+}

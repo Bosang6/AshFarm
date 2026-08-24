@@ -47,13 +47,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "功能组件", meta = (DisplayName = "是否可安装组件"))
 	bool CanInstall(TSubclassOf<UActorComponent> UpgradeClass);
 
-	// // 安装组件
-	// UPROPERTY(BlueprintCallable, Category = "功能组件", meta = (DisplayName = "安装组件"))
-	// bool InstallUpgrade(TSubclassOf<UActorComponent> UpgradeClass);
+	// 安装组件
+	UFUNCTION(BlueprintCallable, Category = "功能组件", meta = (DisplayName = "安装组件"))
+	bool InstallUpgrade(TSubclassOf<UActorComponent> UpgradeClass);
 
-	// // 卸载组件
-	// UPROPERTY(BlueprintCallable, Category = "功能组件", meta = (DisplayName = "卸载组件"))
-	// bool InstallUpgrade(TSubclassOf<UActorComponent> UpgradeClass);
+	// 卸载组件
+	UFUNCTION(BlueprintCallable, Category = "功能组件", meta = (DisplayName = "卸载组件"))
+	bool UninstallUpgrade(UActorComponent* Upgrade);
 
 protected:
 	// Called when the game starts
