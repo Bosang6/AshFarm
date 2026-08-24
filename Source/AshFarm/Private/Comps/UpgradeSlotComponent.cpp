@@ -3,6 +3,7 @@
 
 #include "Comps/UpgradeSlotComponent.h"
 #include "AshFarm.h"
+#include "Inventory/Inventory.h"
 
 TMap<TSubclassOf<UActorComponent>, FInstallRule> UUpgradeSlotComponent::InstallRuleCache = {};
 
@@ -132,6 +133,13 @@ bool UUpgradeSlotComponent::CanInstall(TSubclassOf<UActorComponent> UpgradeClass
 		return false;
 	}
 
+	// 检查槽位是否已满
+	if(InstalledUpgrades.Num() >= MaxSlots)
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("槽位已满，无法安装组件!"));
+		return false;
+	}
+
 	// 检查安装规则表是否加载成功
 	if(!IsValid(InstallRuleTable))
 	{
@@ -153,7 +161,7 @@ bool UUpgradeSlotComponent::CanInstall(TSubclassOf<UActorComponent> UpgradeClass
 		return true;
 	}
 
-	// 子类判断
+	// 检查 Owner 是不是规则里白名单的任意一个 (子类判断)
 	for(const auto& OwnerClass : Rule->ValidOwners)
 	{
 		if(!OwnerClass)
@@ -162,14 +170,92 @@ bool UUpgradeSlotComponent::CanInstall(TSubclassOf<UActorComponent> UpgradeClass
 		}
 
 		// IsA: 判断 Owner 是不是 OwnerClass 的实例
-		if(Owner->IsA(OwnerClass))
+		if(!Owner->IsA(OwnerClass))
 		{
-			UE_LOG(A_LogAshFarm, Warning, TEXT("%s 可以安装在 %s 上"), *UpgradeClass->GetName(), *OwnerClass->GetName());
-			return true;
+			UE_LOG(A_LogAshFarm, Warning, TEXT("%s 不可以安装在 %s 上"), *UpgradeClass->GetName(), *OwnerClass->GetName());
+			return false;
 		}
 	}
 
-	UE_LOG(A_LogAshFarm, Warning, TEXT("%s 不能安装在 %s 上"), *UpgradeClass->GetName(), *Owner->GetName());
-	return false;
+	// 检查重复安装
+	if(!Rule->bAllowDuplicate)
+	{
+		// 检查是否已安装相同组件
+		for(const auto& InstalledUpgrade : InstalledUpgrades)
+		{
+			if(IsValid(InstalledUpgrade) && InstalledUpgrade->IsA(UpgradeClass))
+			{
+				UE_LOG(A_LogAshFarm, Warning, TEXT("%s 已安装在 %s 上"), *UpgradeClass->GetName(), *Owner->GetName());
+				return false;
+			}
+		}
+	}
+
+	// 检查兼容性
+	if(!CheckCompatibility(UpgradeClass, *Rule))
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("%s 与 %s 不兼容"), *UpgradeClass->GetName(), *Owner->GetName());
+		return false;
+	}
+
+	// 检查物品资源是否足够
+	if(!CheckCost(*Rule))
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("%s 物品资源不足"), *UpgradeClass->GetName());
+		return false;
+	}
+
+	UE_LOG(A_LogAshFarm, Warning, TEXT("%s 可以安装在 %s 上"), *UpgradeClass->GetName(), *Owner->GetName());
+	return true;
 }
 
+// 检查组件安装兼容性
+bool UUpgradeSlotComponent::CheckCompatibility(TSubclassOf<UActorComponent> UpgradeClass, const FInstallRule& Rule) const
+{
+	if(!IsValid(UpgradeClass))
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("请先设置组件类"));
+		return false;
+	}
+
+	// 新组件 排斥 已安装的组件
+	for(const auto& InstalledUpgrade : InstalledUpgrades)
+	{
+		if(!IsValid(InstalledUpgrade))
+		{
+			continue;
+		}
+
+		if(Rule.IncompatibleWith.Contains(InstalledUpgrade->GetClass()))
+		{
+			UE_LOG(A_LogAshFarm, Warning, TEXT("%s 与 %s 不兼容"), *UpgradeClass->GetName(), *InstalledUpgrade->GetName());
+			return false;
+		}
+	}
+
+	// 已安装的组件 排斥 新组件
+	for(const auto& InstalledUpgrade : InstalledUpgrades)
+	{
+		if(!IsValid(InstalledUpgrade))
+		{
+			continue;
+		}
+
+		// 获取已安装的组件规则
+		const FInstallRule* InstalledUpgradeRule = FindInstallRule(InstalledUpgrade->GetClass());
+		// 判断已安装的组件是否排斥新组件
+		if(InstalledUpgradeRule->IncompatibleWith.Contains(UpgradeClass))
+		{
+			UE_LOG(A_LogAshFarm, Warning, TEXT("%s 与 %s 不兼容"), *UpgradeClass->GetName(), *InstalledUpgrade->GetName());
+			return false;
+		}
+	}
+
+	return true;
+}
+
+// 检查物品资源是否足够
+bool UUpgradeSlotComponent::CheckCost(const FInstallRule& Rule) const
+{
+	return false;
+}

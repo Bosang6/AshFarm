@@ -7,6 +7,7 @@
 #include "Comps/InstallRule.h"
 #include "UpgradeSlotComponent.generated.h"
 
+class AInventory;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ASHFARM_API UUpgradeSlotComponent : public UActorComponent
@@ -28,7 +29,7 @@ public:
 	
 	// 最大槽数
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "功能组件", meta = (DisplayName = "最大槽数"))
-	int32 MaxSlot = 2;
+	int32 MaxSlots = 2;
 
 	// =====================
 	// 运行时属性
@@ -70,11 +71,17 @@ private:
 
 	TObjectPtr<AActor> Owner;
 
+	TObjectPtr<AInventory> Inventory;
+
 	// 组件安装规则缓存 (静态不能使用UPROPERTY)
 	static TMap<TSubclassOf<UActorComponent>, FInstallRule> InstallRuleCache;
 
 	// 查找安装规则
 	const FInstallRule* FindInstallRule(TSubclassOf<UActorComponent> UpgradeClass) const;
 	
-		
+	// 检查组件安装兼容性
+	bool CheckCompatibility(TSubclassOf<UActorComponent> UpgradeClass, const FInstallRule& Rule) const;
+
+	// 检查物品资源是否足够
+	bool CheckCost(const FInstallRule& Rule) const;
 };
