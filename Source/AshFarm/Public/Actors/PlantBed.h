@@ -33,7 +33,7 @@ public:
 	TObjectPtr<UProgressBarComponent> ProgressBarComponent;
 
 	// 目前种植的作物类型
-	UPROPERTY(EditAnywhere, Instanced, BlueprintReadWrite, Category = "种植", meta = (DisplayName = "当前作物类型"))
+	UPROPERTY(EditAnywhere, Instanced, BlueprintReadWrite, Category = "种植", meta = (DisplayName = "当前作物"))
 	TObjectPtr<UPlantBase> CurrentPlant;
 
 	

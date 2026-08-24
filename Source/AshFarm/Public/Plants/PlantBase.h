@@ -54,7 +54,7 @@ public:
 
 	// 植物成熟事件
 	// BlueprintAssignable：允许在蓝图中实现该委托
-	UPROPERTY(BlueprintAssignable, Category = "植物|事件")
+	UPROPERTY(BlueprintAssignable, Category = "植物|事件", meta = (DisplayName = "当植物成熟时"))
 	FOnPlantMatured OnPlantMatured;
 
 	// ====================
