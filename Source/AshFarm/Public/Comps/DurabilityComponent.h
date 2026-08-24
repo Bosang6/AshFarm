@@ -6,6 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "DurabilityComponent.generated.h"
 
+// 定义委托
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDurabilityChanged, float, Durability);
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ASHFARM_API UDurabilityComponent : public UActorComponent
@@ -15,6 +18,16 @@ class ASHFARM_API UDurabilityComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UDurabilityComponent();
+
+	// ===============
+	// 委托
+	// ===============
+
+	UPROPERTY(BlueprintAssignable, Category = "耐久度组件", meta = (DisplayName = "当即将损坏时"))
+	FOnDurabilityChanged OnCritical;
+
+	UPROPERTY(BlueprintAssignable, Category = "耐久度组件", meta = (DisplayName = "当损坏时"))
+	FOnDurabilityChanged OnBroken;
 
 	// 是否可无限修复
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "耐久度组件", meta = (DispalyName = "是否可无限修复"));

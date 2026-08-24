@@ -120,12 +120,14 @@ float UDurabilityComponent::TakeDamage(float DamageAmount)
 
 	if(IsCritical())
 	{
-		// TODO 广播委托
+		// 广播委托, 耐久度危险
+		OnCritical.Broadcast(Durability);
 	}
 
 	if(Durability <= 0.0f)
 	{
-		// TODO 广播委托, 耐久度为0
+		// 广播委托, 耐久度为0
+		OnBroken.Broadcast(Durability);
 		UE_LOG(A_LogAshFarm, Warning, TEXT("%s: 已损坏, 耐久度为0"), *Owner->GetName());
 	}
 
