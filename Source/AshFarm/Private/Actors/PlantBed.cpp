@@ -55,6 +55,12 @@ void APlantBed::BeginPlay()
 	APlantBed::TotalCount++;
 
 	InitNeighborBeds();
+
+	// 绑定新植物的委托
+	if(IsValid(CurrentPlant))
+	{
+		CurrentPlant->OnPlantMatured.AddDynamic(this, &APlantBed::OnPlantMatured);
+	}
 }
 
 // Called every frame
@@ -561,3 +567,12 @@ void APlantBed::OnInteract_Implementation()
 	Harvest();
 }
 
+// ==============
+// 回调函数
+// ==============
+
+// 植物成熟时调用
+void APlantBed::OnPlantMatured(UPlantBase* Plant)
+{
+	UE_LOG(A_LogAshFarm, Warning, TEXT("种植床: %d 植物 %s 已成熟"), BedID, *Plant->GetPlantName());
+}

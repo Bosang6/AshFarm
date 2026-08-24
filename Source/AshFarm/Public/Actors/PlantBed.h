@@ -157,6 +157,14 @@ public:
 	void PrintState();
 
 	// ==============
+	// 回调函数
+	// ==============
+
+	// 任何的回调函数都必须用 UFUNCTION 修饰
+	UFUNCTION(meta = (DisplayName = " 当植物成熟时"))
+	void OnPlantMatured(UPlantBase* Plant); //回调函数的前面必须与在 PlantBase.h 用宏声明的委托一致
+
+	// ==============
 	// 统计数据
 	// ==============
 
