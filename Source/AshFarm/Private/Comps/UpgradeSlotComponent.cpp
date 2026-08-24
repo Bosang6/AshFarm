@@ -80,3 +80,96 @@ void UUpgradeSlotComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	// ...
 }
 
+// 查找安装规则
+const FInstallRule* UUpgradeSlotComponent::FindInstallRule(TSubclassOf<UActorComponent> UpgradeClass) const
+{
+	if(!InstallRuleTable)
+	{
+		UE_LOG(A_LogAshFarm, Error, TEXT("请先设置安装规则表!"));
+		return nullptr; 
+	}
+
+	if(!UpgradeClass)
+	{
+		UE_LOG(A_LogAshFarm, Error, TEXT("请先设置组件类!"));
+		return nullptr;
+	}
+
+	// 从缓存中查找
+	if(const FInstallRule* Rule = InstallRuleCache.Find(UpgradeClass))
+	{
+		return Rule;
+	}
+
+	// 组件可能是蓝图的组件，比如继承自 UGreenHouseComponent 的子类
+	// 因此需要判断 CompClass是否属于规则内的一个子类
+	for(const auto& Pair : InstallRuleCache)
+	{
+		if(UpgradeClass->IsChildOf(Pair.Key))
+		{
+			return &Pair.Value;
+		}
+	}
+
+	return nullptr;
+}
+
+
+// 检查是否可安装组件
+bool UUpgradeSlotComponent::CanInstall(TSubclassOf<UActorComponent> UpgradeClass)
+{
+	// 检查Owner
+	if(!IsValid(Owner))
+	{
+		UE_LOG(A_LogAshFarm, Error, TEXT("[UpgradeSlot组件] Owner 无效"));
+		return false;
+	}
+
+	// 检查安装的组件类是否有效
+	if(!UpgradeClass)
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("请先设置组件类!"));
+		return false;
+	}
+
+	// 检查安装规则表是否加载成功
+	if(!IsValid(InstallRuleTable))
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("请先设置安装规则表!"));
+		return false;
+	}
+
+	const FInstallRule* Rule = FindInstallRule(UpgradeClass);
+	if(!Rule)
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("%s 未找到安装规则!"), *UpgradeClass->GetName());
+		return false;
+	}
+
+	// 规则白名单中没有指定规则，则不限制安装
+	if(Rule->ValidOwners.IsEmpty())
+	{
+		UE_LOG(A_LogAshFarm, Warning, TEXT("%s 未指定有效安装规则，默认允许安装在所有Actor上"), *UpgradeClass->GetName());
+		return true;
+	}
+
+	// 子类判断
+	for(const auto& OwnerClass : Rule->ValidOwners)
+	{
+		if(!OwnerClass)
+		{
+			continue;
+		}
+
+		// IsA: 判断 Owner 是不是 OwnerClass 的实例
+		if(Owner->IsA(OwnerClass))
+		{
+			UE_LOG(A_LogAshFarm, Warning, TEXT("%s 可以安装在 %s 上"), *UpgradeClass->GetName(), *OwnerClass->GetName());
+			return true;
+		}
+	}
+
+	UE_LOG(A_LogAshFarm, Warning, TEXT("%s 不能安装在 %s 上"), *UpgradeClass->GetName(), *Owner->GetName());
+	return false;
+}
+

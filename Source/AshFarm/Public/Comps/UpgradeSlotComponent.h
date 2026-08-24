@@ -43,8 +43,8 @@ public:
 	// =====================
 
 	// 检查是否可安装组件
-	// UPROPERTY(BlueprintCallable, Category = "功能组件", meta = (DisplayName = "是否可安装组件"))
-	// bool CanInstall(TSubclassOf<UActorComponent> UpgradeClass);
+	UFUNCTION(BlueprintCallable, Category = "功能组件", meta = (DisplayName = "是否可安装组件"))
+	bool CanInstall(TSubclassOf<UActorComponent> UpgradeClass);
 
 	// // 安装组件
 	// UPROPERTY(BlueprintCallable, Category = "功能组件", meta = (DisplayName = "安装组件"))
@@ -72,5 +72,9 @@ private:
 
 	// 组件安装规则缓存 (静态不能使用UPROPERTY)
 	static TMap<TSubclassOf<UActorComponent>, FInstallRule> InstallRuleCache;
+
+	// 查找安装规则
+	const FInstallRule* FindInstallRule(TSubclassOf<UActorComponent> UpgradeClass) const;
+	
 		
 };
