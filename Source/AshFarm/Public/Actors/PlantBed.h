@@ -144,6 +144,10 @@ public:
 	// 从AAcotr继承的函数，类似蓝图中的构造脚本，每次拖动Actor都会执行
 	virtual void OnConstruction(const FTransform& Transform) override;
 
+	// 清除植物
+	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "清除植物"))
+	void ClearPlant();
+
 	// 清除死亡植物
 	UFUNCTION(BlueprintCallable, Category = "土壤", meta = (DisplayName = "清除死亡植物"))
 	void ClearDeadPlant();

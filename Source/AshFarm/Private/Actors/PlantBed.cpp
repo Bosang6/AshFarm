@@ -378,6 +378,17 @@ float APlantBed::GetMoistureLossRateBySoilType() const
 	}
 }
 
+// 清除植物
+void APlantBed::ClearPlant()
+{
+	if(IsValid(CurrentPlant))
+	{
+		CurrentPlant->OnPlantMatured.RemoveAll(this); // 委托解绑
+		CurrentPlant = nullptr;
+		UpdatePlantMesh();
+	}
+}
+
 // 清除死亡植物
 void APlantBed::ClearDeadPlant()
 {
@@ -395,9 +406,7 @@ void APlantBed::ClearDeadPlant()
 
 
 	UE_LOG(A_LogAshFarm, Warning, TEXT("植物床ID: %d 清除死亡植物"), BedID);
-	CurrentPlant = nullptr;
-
-	UpdatePlantMesh();
+	ClearPlant();
 	
 }
 
@@ -452,8 +461,7 @@ void APlantBed::Harvest()
 				ByproductAmount
 			);
 
-	CurrentPlant = nullptr;
-	UpdatePlantMesh();
+	ClearPlant();
 }
 
 // 打印状态
